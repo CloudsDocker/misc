@@ -1,0 +1,3 @@
+
+Why are we making the changes?
+Transformation is a critical function for the Group, leading significant change, including end to end programmes of work which create simpler, better and faster banking experiences for our customers, and make life easier for our colleagues. ‎ Transformation has made good progress in recent months, especially in up-skilling our programme managers, improving our methods and tools in conjunction with Technology, and in establishing outcome based vendor partnerships. Changing reporting lines to business COOs will keep Transformation teams much more connected to the priorities of the businesses.
