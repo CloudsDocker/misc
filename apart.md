@@ -1,0 +1,12 @@
+- Check out the developer. Find out who the developer is, what else have they done, have they always delivered? Were other buyers happy with the end results?
+- What stage is it at? Is there a development approval, has it been put out to tender?
+- Who is insuring the development? and what level of insurance is there?
+- 澳洲楼花网
+- http://www.prd.com.au/ (reports)
+- http://www.apartmentdevelopments.com.au/
+- http://www.opencorp.com.au/avoid-500k-mistake/?utm_source=SPI&utm_medium=POPUP&utm_campaign=avoid500DEC&utm_term=pi-miniguide&utm_content=630
+-  http://www.news.com.au/finance/real-estate/buying/failed-offtheplan-apartments-secondhand/news-story/878871e5d82175b424b2cac6ed796374
+- If an off-the-plan sale falls through, the property will be considered second-hand, The Australian reports. This means thousands of foreign buyers will be stopped from picking up the properties, lowering the eventual resale price.
+- http://www.corelogic.com.au/
+- http://www.smartpropertyinvestment.com.au/opinion/13125-buying-and-selling-off-the-plan
+- http://www.abc.net.au/news/2016-02-05/off-the-plan-apartments-carry-high-risks/7144040
