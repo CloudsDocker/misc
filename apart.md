@@ -3,6 +3,7 @@
 - Who is insuring the development? and what level of insurance is there?
 - 澳洲楼花网
 - http://www.prd.com.au/ (reports)
+- www.firb.gov.au/content/faq.asp
 - http://www.apartmentdevelopments.com.au/
 - http://www.opencorp.com.au/avoid-500k-mistake/?utm_source=SPI&utm_medium=POPUP&utm_campaign=avoid500DEC&utm_term=pi-miniguide&utm_content=630
 -  http://www.news.com.au/finance/real-estate/buying/failed-offtheplan-apartments-secondhand/news-story/878871e5d82175b424b2cac6ed796374
