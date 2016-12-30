@@ -14,10 +14,14 @@
 - Launch **full-fledged** business
 - At the most basic level, xxx
 - Server consolidation through virtualization lets you **get more out of** your existing servers.
+- organizations with **a global reach or business** that provide services xxx
 
 
 # Synonyms
-
+- **headway**: movement,increment. I've made some more headway with this design
+- **hinder**:  slow, impede,ZuAi. I won't hinder you, I'll go out. Those extra jobs will hinder the performance of the applicaitn.
+- **heterogeneous**: diverse in character or content. Working seamlessly with a heterogenous mixture of SLBs, including Cisco and third-party devices.
+- **dispersed**: distributed , with geographically dispersed data centers
 - **frenzy**：crazy, violent mental agitation
 - **reckon**: admit. He reckons  there are some questions about xx
 - **commensurate**: in line with, appropriate to , according to, relative to. Such heavy responsibility must receive commensurate reward. Salary will be commensurate with age and experience. Permissions should be granted commensurate with requirements.
