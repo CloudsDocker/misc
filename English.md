@@ -15,9 +15,19 @@
 - At the most basic level, xxx
 - Server consolidation through virtualization lets you **get more out of** your existing servers.
 - organizations with **a global reach or business** that provide services xxx
+- The software architecutre and systems of a company are akin to a cardiovascular system in your average mamal.
+- You must **put the customer front and center **as you embark on iterations and new projects; **their experience will decide your success**.
+- As technology innovation hastens and spreads to enterprises beyond the traditional tech industries, developers must take an active role in championing these drivers for success.
 
 
 # Synonyms
+- **herald**: signal,indicate,announce, acclaim. The speech heralded a change in policy.This tech is a signal heralding a new generation of xx
+- **hasten**: hurry, move quickly.
+- **espionage**: spying. e.g. cyber espionage
+- **covert**: secret,furtive. covert operations. covert surveillance
+- **epicenter**: center, the central  point of something, typically a difficult or unpleasant situation. You and your team are at the epicenter of this transformation.
+- **intuit**: find out, discover, be aware, understand or work out by instinct. As you might intuit,xxx (as you can imagine)
+- **ramification**: consequence, result, effect. A complex or unwelcome consequence of an action or event. e.g. the real ramification of the issue. This has a couple of important ramifications.
 - **headway**: movement,increment. I've made some more headway with this design
 - **hinder**:  slow, impede,ZuAi. I won't hinder you, I'll go out. Those extra jobs will hinder the performance of the applicaitn.
 - **heterogeneous**: diverse in character or content. Working seamlessly with a heterogenous mixture of SLBs, including Cisco and third-party devices.
