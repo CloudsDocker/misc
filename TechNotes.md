@@ -84,11 +84,11 @@ x.clone().equasl(x) (but not absolute requirements)
 
 
 # Disaster Recovery
-DRaas: Disaster Recovery-as-a-Service
-RPO: Recovery Point Objective, refers to the point in time in the past to which you will recover
-RTO: Recovery Time Objective, refers to the point in time in the future at which you will be up and running again.
+- **DRaas**: Disaster Recovery-as-a-Service
+- **RPO**: Recovery Point Objective, refers to the point in time in the past to which you will recover
+- **RTO**: Recovery Time Objective, refers to the point in time in the future at which you will be up and running again.
 
-<------RPO-----Disaster Strikes---RTO----->
+> <------RPO-----Disaster Strikes---RTO----->
 Time between RPO and Disater means lost trasnactions
 Time between Diaster and RTO means time down
 Think of the above diagram as a timeline of events during which a disaster happens. The RPO will be the point to which you will have all data up to that point recovered. The gap between the disaster and the RPO will likely be lost as a result of the disaster.
@@ -97,4 +97,4 @@ Robinson explains, “If you’re a Tier 1 banking high-transaction application,
 He continues, “If you are referring to a website, however, which is updated monthly, you’re RPO can be as much as weeks back in time since not much will have changed, if anything. You are more comfortable going farther back in time to recover, and likely you will end up paying less for that RPO.”
 And finally, the acronym PTO stands for paid time off. 
 
-PTO: Paid Time Off. PTO is what you take the day after you've sucessfully recovered from your disaster and your business is back up and running at full speed ahead.
+**PTO**: Paid Time Off. PTO is what you take the day after you've sucessfully recovered from your disaster and your business is back up and running at full speed ahead.
