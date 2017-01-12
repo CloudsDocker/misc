@@ -87,6 +87,8 @@ x.clone().equasl(x) (but not absolute requirements)
 - **DRaas**: Disaster Recovery-as-a-Service
 - **RPO**: Recovery Point Objective, refers to the point in time in the past to which you will recover
 - **RTO**: Recovery Time Objective, refers to the point in time in the future at which you will be up and running again.
+- **PTO**: Paid Time Off. PTO is what you take the day after you've sucessfully recovered from your disaster and your business is back up and running at full speed ahead.
+- **RCO**: Recovery COnsistency Objective defines a measurement for the consistency of distributed business data within interlinked systems after a disater incident. Similar to terms used in this context are **RCC** Recovery Consistency Charactereristics and **ROG**: recovery object granualarity.
 
 > <------RPO-----Disaster Strikes---RTO----->
 Time between RPO and Disater means lost trasnactions
@@ -97,4 +99,8 @@ Robinson explains, “If you’re a Tier 1 banking high-transaction application,
 He continues, “If you are referring to a website, however, which is updated monthly, you’re RPO can be as much as weeks back in time since not much will have changed, if anything. You are more comfortable going farther back in time to recover, and likely you will end up paying less for that RPO.”
 And finally, the acronym PTO stands for paid time off. 
 
-**PTO**: Paid Time Off. PTO is what you take the day after you've sucessfully recovered from your disaster and your business is back up and running at full speed ahead.
+## RCO
+The term RCO focuses on business data consistency across multiple systems in SOA-driven business applications such as SAP ERP.
+While RTO and RPO are absolute per-system values, RCO is expressed as percentage measuring the deviation between actual and targeted state of business data across systems for individual business processes or process groups.
+
+Targeting 100% RCO for a business process (distributed across several systems) would mean that no business data deviation is allowed after a disaster incident whereas any target below 100% allows deviation. Target values for RCO increase with the criticality of the underlying business data: logistics and banking-related business processes are often characterized by higher RCO requirements than those of CRM or HR systems.
