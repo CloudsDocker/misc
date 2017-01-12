@@ -65,8 +65,98 @@ SLB: Server Load Balances
 netezza DB
 
 
-# Java Object
-## Methods in Java
+# Java 
+## Read ascii files in Java
+
+```java
+//In Java7
+new String(Files.readAllLines(...))
+//in Java 8
+Files.lines(...).forEach(...) // without order
+Files.lines(...).forEachOrdered(...) // with order
+
+// traditional reader
+BufferedReader br=new BufferedReader(new FileReader("file.txt"));
+try{
+	StringBuilder sb=new StringBuilder();
+	 String line = br.readLine();
+
+    while (line != null) {
+        sb.append(line);
+        sb.append(System.lineSeparator());
+        line = br.readLine();
+    }
+    String everything = sb.toString();
+} finally {
+    br.close();
+}
+//**********************
+// or use Java 7 try-with-resoures, i.e. auto close features
+try(BufferedReader br=new BufferedReader(new FileReader("file.txt"))){
+	StringBuilder xxx
+	xxx
+}
+
+// using Scanner
+for(Scanner sc = new Scanner(new File("my.file")); sc.hasNext(); ) {
+  String line = sc.nextLine();
+  ... // do something with line
+}
+
+// using 3rd libraries, like Apache Commone FileUtils, Guava,etc
+```
+
+When reading and writing text files:
+- it's often a good idea to use buffering (default size is 8K)
+- there's always a need to pay attention to exceptions (in particular, IOException and FileNotFoundException)
+
+The FileReader and FileWriter classes are a bit tricky, since they implicitly use the system's default character encoding. If this default is not appropriate, the recommended alternatives are, for example:
+```java
+FileInputStream fis = new FileInputStream("test.txt");
+InputStreamReader in = new InputStreamReader(fis, "UTF-8");
+
+FileOutputStream fos = new FileOutputStream("test.txt");
+OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8");
+
+Scanner scanner = new Scanner(file, "UTF-8"); 
+
+
+ List<String> readSmallTextFile(String aFileName) throws IOException {
+    Path path = Paths.get(aFileName);
+    return Files.readAllLines(path, ENCODING);
+  }
+  
+   void readLargerTextFile(String aFileName) throws IOException {
+    Path path = Paths.get(aFileName);
+    try (Scanner scanner =  new Scanner(path, ENCODING.name())){
+      while (scanner.hasNextLine()){
+                log(scanner.nextLine());
+      }      
+    }
+  }
+  
+  void readLargerTextFileAlternate(String aFileName) throws IOException {
+    Path path = Paths.get(aFileName);
+    try (BufferedReader reader = Files.newBufferedReader(path, ENCODING)){
+      String line = null;
+      while ((line = reader.readLine()) != null) {
+                log(line);
+      }      
+    }
+  }
+  
+  protected void processLine(String aLine){
+        Scanner scanner = new Scanner(aLine);
+    scanner.useDelimiter("=");
+    if (scanner.hasNext()){
+            String name = scanner.next();
+      String value = scanner.next();
+      log("Name is : " + quote(name.trim()) + ", and Value is : " + quote(value.trim()));
+```
+
+This example demonstrates using Scanner to read a file containing lines of **structured** data. One Scanner is used to read in each line, and a second Scanner is used to parse each line into a simple name-value pair. The Scanner class is **only used for reading**, not for writing. 
+## Java Object
+### Methods in Java
 - clone
 - equals
 - finalize
@@ -104,3 +194,4 @@ The term RCO focuses on business data consistency across multiple systems in SOA
 While RTO and RPO are absolute per-system values, RCO is expressed as percentage measuring the deviation between actual and targeted state of business data across systems for individual business processes or process groups.
 
 Targeting 100% RCO for a business process (distributed across several systems) would mean that no business data deviation is allowed after a disaster incident whereas any target below 100% allows deviation. Target values for RCO increase with the criticality of the underlying business data: logistics and banking-related business processes are often characterized by higher RCO requirements than those of CRM or HR systems.
+
