@@ -18,6 +18,7 @@
 - The software architecutre and systems of a company are akin to a cardiovascular system in your average mamal.
 - You must **put the customer front and center **as you embark on iterations and new projects; **their experience will decide your success**.
 - As technology innovation hastens and spreads to enterprises beyond the traditional tech industries, developers must take an active role in championing these drivers for success.
+- Practice makes perfect
 
 
 # Synonyms

@@ -154,6 +154,7 @@ Scanner scanner = new Scanner(file, "UTF-8");
       log("Name is : " + quote(name.trim()) + ", and Value is : " + quote(value.trim()));
 ```
 
+
 This example demonstrates using Scanner to read a file containing lines of **structured** data. One Scanner is used to read in each line, and a second Scanner is used to parse each line into a simple name-value pair. The Scanner class is **only used for reading**, not for writing. 
 ## Java Object
 ### Methods in Java
@@ -194,4 +195,37 @@ The term RCO focuses on business data consistency across multiple systems in SOA
 While RTO and RPO are absolute per-system values, RCO is expressed as percentage measuring the deviation between actual and targeted state of business data across systems for individual business processes or process groups.
 
 Targeting 100% RCO for a business process (distributed across several systems) would mean that no business data deviation is allowed after a disaster incident whereas any target below 100% allows deviation. Target values for RCO increase with the criticality of the underlying business data: logistics and banking-related business processes are often characterized by higher RCO requirements than those of CRM or HR systems.
+
+## Lambda
+“Abstraction is a concept that is familiar to us all from object-oriented programming. The difference is that object-oriented programming is mostly about abstracting over data, while functional programming is mostly about abstracting over behavior”
+”
+
+Functional Programing is a team that means different things to different people.
+
+At the heart of functional programing is thinking about your problem domain in terms of immutable values and functions that translate between them.
+
+- The problem of annonymouse function is if you are going to use a variable external, the variable has to be declared as final.
+
+- “It’s possible to refer to variables that aren’t final; however, they still have to be effectively final. Although you haven’t declared the variable(s) as final, you still cannot use them as nonfinal variable(s) if they are to be used in lambda ”
+- “The implication of being effectively final is that you can assign to the variable only once. Another way to understand this distinction is that lambda expressions capture values, not variables.”
+- Lambda expresssion are staticaly typed.
+- “A functional interface is **an(any) interface** with a **single abstract method** that is **used as the type of a lambda expression**.”
+
+- “Example 2-9. **Diamond operator inference** for variables
+```java
+Map<String, Integer> oldWordCounts = new HashMap<String, Integer>();  
+Map<String, Integer> diamondWordCounts = new HashMap<>();  ”
+```
+- “A lambda expression is a method without a name that is used to pass around behavior as if it were 
+
+- To create a thread safe DateFormatter
+```java
+public final static ThreadLocal<DateFormatter> formatter = ThreadLocal.withInitial(() -> new DateFormatter(new SimpleDateFormat("dd-MMM-yyyy")));
+```
+
+## Streams
+> From external iteration to Internal iteration
+
+- To avoid boilerplate code.
+
 
