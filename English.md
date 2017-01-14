@@ -22,6 +22,7 @@
 
 
 # Synonyms
+- **high time**: the right time. It's high time we should do xx.
 - **herald**: signal,indicate,announce, acclaim. The speech heralded a change in policy.This tech is a signal heralding a new generation of xx
 - **hasten**: hurry, move quickly.
 - **espionage**: spying. e.g. cyber espionage

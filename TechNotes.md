@@ -227,5 +227,33 @@ public final static ThreadLocal<DateFormatter> formatter = ThreadLocal.withIniti
 > From external iteration to Internal iteration
 
 - To avoid boilerplate code.
+### map
+- Map let you apply this funciton to a stream of values, producting anotehr stream of the new value. i.e. convert a value of one **type** into **another type**
+- “Example 3-13. Finding the shortest track with streams
+```java
+List<Track> tracks = asList(new Track("Bakai", 524),
+                            new Track("Violets for Your Furs", 378),
+                            new Track("Time Was", 451));
+Track shortestTrack = tracks.stream()
+                            .min(Comparator.comparing(track -> track.getLength()))
+                            .get();
 
+assertEquals(tracks.get(1), shortestTrack);
+```
+- **reduce**
+```java
+BinaryOperator<Integer> accumulator=(x,y)->x+y;
+    int count=accumulator.apply(accumulator.apply(accumulator.apply(0, 1), 2), 3);
+    Assert.assertEquals(count, 6);
+```
+
+- Sample of get nationality of an album
+```java
+“Set<String> origins = album.getMusicians()
+                           .filter(artist ->artist.getName().startsWith("The"))
+                           .map(artist -> artist.getNationality())
+                           .collect(toSet());
+```
+
+- The calls to musicians, filter, and map all **return Stream** objects, so they are **lazy**, while the **collect method is eager**. 
 
