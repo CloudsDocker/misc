@@ -255,5 +255,9 @@ BinaryOperator<Integer> accumulator=(x,y)->x+y;
                            .collect(toSet());
 ```
 
-- The calls to musicians, filter, and map all **return Stream** objects, so they are **lazy**, while the **collect method is eager**. 
+- The calls to musicians, filter, and map all **return Stream** objects, so they are **lazy**, while the **collect method is eager**.
+
+- A **higher-order function**  is a function that either take another function as an argument or returns a function as its result.
+
+- The **default** method is a virtual method- that is, the opposite of a static method.
 
