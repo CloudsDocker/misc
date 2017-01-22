@@ -19,10 +19,14 @@
 - You must **put the customer front and center **as you embark on iterations and new projects; **their experience will decide your success**.
 - As technology innovation hastens and spreads to enterprises beyond the traditional tech industries, developers must take an active role in championing these drivers for success.
 - Practice makes perfect
-
+- technological flux, you also lose the respect of those who do code
+- At the core of understanding this argument is the software change curve. The change curve says that as the project runs, it becomes exponentially more expensive to make changes.The change curve is usually expressed in terms of phases "a change made in analysis for $1 would cost thousands to fix in production".
+- before the modern computer science terminology prevailed.
 
 # Synonyms
 - **high time**: the right time. It's high time we should do xx.
+- **sought after**: desired, demanded. The most sought-after skills by Java developers.
+- **entropy**: chaos. this may lead to software entropy
 - **herald**: signal,indicate,announce, acclaim. The speech heralded a change in policy.This tech is a signal heralding a new generation of xx
 - **hasten**: hurry, move quickly.
 - **espionage**: spying. e.g. cyber espionage
@@ -51,3 +55,6 @@
 - **obfuscate**: make obscure, unclear, confuse, blur. Obfuscated code is source or machine code that has been made difficult to understand for humans.
 - **subside**: less severe, Become less intense, violent, or severe:
 ‘I'll wait a few minutes until the storm subsides’
+
+# New words
+- **irreparably**: can be fixed/repaired. This action could irreparably damage our relationship. His eye got damaged irreparably.
