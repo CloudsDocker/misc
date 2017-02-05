@@ -24,6 +24,10 @@
 - before the modern computer science terminology prevailed.
 
 # Synonyms
+- **juggle**: compensate. V-T If you juggle lots of different things, such as your work and your family, you try to give enough time or attention to all of them. 尽量兼顾
+例： The management team meets several times a week to juggle budgets and resources.
+管理团队一周开几次会，力图兼顾预算和资源。
+- **stinking**: hatred, disgusting. They are stinking animals.
 - **high time**: the right time. It's high time we should do xx.
 - **sought after**: desired, demanded. The most sought-after skills by Java developers.
 - **entropy**: chaos. this may lead to software entropy
