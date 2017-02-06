@@ -24,6 +24,7 @@
 - before the modern computer science terminology prevailed.
 
 # Synonyms
+- intuit: aware. ad you may intuit,XXX
 - **juggle**: compensate. V-T If you juggle lots of different things, such as your work and your family, you try to give enough time or attention to all of them. 尽量兼顾
 例： The management team meets several times a week to juggle budgets and resources.
 管理团队一周开几次会，力图兼顾预算和资源。
