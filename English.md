@@ -22,8 +22,12 @@
 - technological flux, you also lose the respect of those who do code
 - At the core of understanding this argument is the software change curve. The change curve says that as the project runs, it becomes exponentially more expensive to make changes.The change curve is usually expressed in terms of phases "a change made in analysis for $1 would cost thousands to fix in production".
 - before the modern computer science terminology prevailed.
+- Parenthesis: ()
+- Braces: {}
+- Brackets: []
 
 # Synonyms
+- `hallmark`: (outstanding)feature. The hallmark of object-orient design is encapsulation.
 - intuit: aware. ad you may intuit,XXX
 - **juggle**: compensate. V-T If you juggle lots of different things, such as your work and your family, you try to give enough time or attention to all of them. 尽量兼顾
 例： The management team meets several times a week to juggle budgets and resources.
