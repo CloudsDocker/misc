@@ -25,6 +25,7 @@
 - Parenthesis: ()
 - Braces: {}
 - Brackets: []
+- a red herring: something is not important but just attract your attention from the main topic
 
 # Synonyms
 - `hallmark`: (outstanding)feature. The hallmark of object-orient design is encapsulation.
