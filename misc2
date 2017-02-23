@@ -1,0 +1,335 @@
+2017.2.23
+
+
+
+A class loader in Java is simply an object whose type extends the ClassLoader class. When the virtual machine needs access to a particular class, it asks the appropriate class loader.
+
+Class loaders are organized into a tree hierarchy. At the root of this tree is the system class loader. This class loader is also called the primordial class loader or the null class loader. It is used only to load classes from the core Java API.
+
+The system class loader has one or more children. It has at least one child; the URL class loader that is used to load classes from the classpath. It may have other direct children, though typically any other class loaders are children of the URL class loader that reads the classpath.
+
+The hierarchy comes into play when it is time to load a class. Classes are loaded in one of three ways: either explicitly by calling the loadClass( ) method of a class loader, explicitly by calling the Class.forName( ) method, or implicitly when they are referenced by an already−loaded class.
+In any case, a class loader is asked to load the class. In the first case, the class loader is the object on which the loadClass( ) method is invoked. In the case of the forName( ) method, the class loader is either passed to that method, or it is the class loader that loaded the class that is calling the forName( ) method. The implicit case is similar: the class loader that was used to load the referencing class is also used to load the referenced class.
+Class loaders are responsible for asking their parent to load a class; only if that operation fails will the class loader attempt to define the class itself.
+ 
+
+The net effect of this is that system classes will always be loaded from the system class loader, classes on the class path will always be loaded by the class loader that knows about the classpath, and in general, a class will be loaded by the oldest class loader in the ancestor hierarchy that knows where to find a class.
+
+When you create a class loader, you can insert it anywhere into the hierarchy of class loaders (except at the root). Typically, when a class loader is created, its parent is the class loader of the class that is instantiating the new class loader.
+
+
+Implementing a Class Loader
+
+Now we'll look at how to implement a class loader. The class loader we implement will be able to extend the normal permissions that are granted via policy files, and it will enforce certain optional security features of the class loader.
+
+The basic class that defines a class loader is the ClassLoader class (java.lang.ClassLoader):
+public abstract class ClassLoader
+Turn a series of Java bytecodes into a class definition. This class does not define how the bytecodes are obtained but provides all other functionality needed to create the class definition.
+
+However, the preferred class to use as the basis of a class loader is the SecureClassLoader class (java.security.SecureClassLoader):
+public class SecureClassLoader extends ClassLoader
+Turn a series of Java bytecodes into a class definition. This class adds secure functionality to the ClassLoader class, but it still does not define how bytecodes are obtained. Although this class is not abstract, you must subclass it in order to use it.
+The secure class loader provides additional functionality in dealing with code sources and protection domains. You should always use this class as the basis of any class loader you work with; in fact, the ClassLoader class would be private were it not for historical reasons.
+
+public class URLClassLoader extends SecureClassLoader
+Load classes securely by obtaining the bytecodes from a set of given URLs.
+
+
+# Key Methods of the Class Loader
+The ClassLoader class and its subclasses have three key methods that you work with when creating your own class loader.
+6.3.2.1 The loadClass( ) method
+The loadClass( ) method is the only public entry into the class loader:
+public Class loadClass(String name)
+
+Load the named class. A ClassNotFoundException is thrown if the class cannot be found.
+This is the simplest way to use a class loader directly: it requires that the class loader be instantiated and then be used via the loadClass( ) method. Once the Class object has been constructed, there are three ways in which a method in the class can be executed:
+The correct implementation of the loadClass( ) method is crucial to the security of the virtual machine. For instance, one operation this method performs is to call the parent class loader to see if it has already defined a particular class; this allows all the
+core Java classes to be loaded by the primordial class loader. If that operation is not performed correctly, security could suffer. As a developer you should be careful when you override this method; as an administrator, this is one of the reasons to prevent untrusted code from creating a class loader.
+
+## 6.3.2.2 The findClass( ) method
+
+The loadClass( ) method performs a lot of setup and bookkeeping related to defining a class, but from a developer perspective, the bulk of the work in creating a Class class object is performed by the findClass( ) method:
+protected Class findClass(String name)
+
+The findClass( ) method uses whatever mechanism it deems appropriate to load the class (e.g., by reading a class file from the file system or from an HTTP server). It is then responsible for creating the protection domain associated with the class and using the next method to create the Class class object.
+
+The defineClass( ) methods
+These methods all take an array of Java bytecodes and some information that specifies the permissions associated with the class represented by those bytecodes. They all return the Class class object:
+protected final Class defineClass(String name, byte[] b, int off, int len)
+
+
+## Responsibilities of the Class Loader
+When you implement a class loader, you override some or all of the methods we've just listed. In sum, the class loader must perform the following steps:
+The security manager is consulted to see if this program is allowed to access the class in question. If it is not, a security exception is thrown. This step is optional; it should be implemented at the beginning of the loadClass( ) method. This
+
+1.	corresponds to the use of the accessClassInPackage permission.
+If the class loader has already loaded this class, it finds the previously defined class object and returns that object. This step is built into the loadClass( ) method.
+
+2.	corresponds to the use of the accessClassInPackage permission.
+If the class loader has already loaded this class, it finds the previously defined class object and returns that object. This step is built into the loadClass( ) method.
+
+3.	Otherwise, the class loader consults its parent to see if the parent knows how to load the class. This is a recursive operation, so the system class loader
+
+4.	will always be asked first to load a class. This prevents programs from providing alternate definitions of classes in the core API (but a clever class loader can defeat that protection). This step is built into the loadClass( ) method.
+The security manager is consulted to see if this program is allowed to create the class in question. If it is not, a security exception is thrown. This step is optional; if implemented, it should appear at the beginning of the findClass( ) method. Note that this step should take place after the parent class loader is queried rather than at the beginning of the operation (as is done with the access check). No Sun−supplied class loader implements this step; it corresponds to the defineClassInPackage permission.
+5.	The class file is read into an array of bytes. The mechanism by which the class loader reads the file and creates the byte array will vary depending on the class loader (which, after all, is one of the points of having different class loaders). This occurs in the findClass( ) method.
+The appropriate protection domain is created for the class. This can come from the default security model (i.e., from the policy files), and it
+6.	can be augmented (or even replaced) by the class loader. Alternately, you can create a code source object and defer definition of the protection domain. This occurs in the findClass( ) method.
+7.	Within the findClass( ) method, a Class object is constructed from the bytecodes by calling the defineClass( ) method. If you used a code source in step 6, the getPermissions( ) method will be called to find the permissions associated with the code source. The defineClass( ) method also ensures that the bytecodes are run through the bytecode verifier.
+8.	Before the class can be used, it must be resolved −− which is to say that any classes that it immediately references must also be found by this class loader. The set of classes that are immediately referenced contains any classes that the class extends as well as any classes used by the static initializers of the class. Note that classes that are used only as instance variables, method parameters, or local variables are not normally loaded in this phase: they are loaded when the class actually references them (although certain compiler optimizations may require that these classes be loaded when the class is resolved). This step happens in the loadClass( ) method.
+
+If you want to use a custom class loader, the easiest route is to use the URL class loader. This limits the number of methods that you have to override.
+To construct an instance of this class, use one of the following constructors:
+public URLClassLoader(URL urls[])
+
+
+URL urls[] = new URL[2];
+urls[0] = new URL("http://piccolo.East/~sdo/");
+urls[1] = new URL("file:/home/classes/LocalClasses.jar"); ClassLoader parent = this.getClass().getClassLoader( ); URLClassLoader ucl = new URLClassLoader(urls, parent);
+
+
+public final synchronized Class loadClass(String name, boolean resolve)
+throws ClassNotFoundException {
+// First check if we have permission to access the package.
+SecurityManager sm = System.getSecurityManager( );
+if (sm != null) {
+int i = name.lastIndexOf('.');
+if (i != −1) {
+sm.checkPackageAccess(name.substring(0, i));
+}
+}
+return super.loadClass(name, resolve);
+}
+6.3.4.2 Step 2: Use the previously−defined class, if available
+The loadClass( ) method of the ClassLoader class performs this operation for you, which is why we've called the super.loadClass( ) method.
+
+6.3.4.3 Step 3: Defer class loading to the parent
+The loadClass( ) method of the ClassLoader class performs this operation. 6.3.4.4 Step 4: Optionally call the checkPackageDefinition( ) method
+In order to call the checkPackageDefinition( ) method, you must override the findClass( ) method:
+
+protected Class findClass(final String name)
+throws ClassNotFoundException {
+// First check if we have permission to access the package. SecurityManager sm = System.getSecurityManager( );
+if (sm != null) {
+int i = name.lastIndexOf('.');
+if (i != −1) {
+sm.checkPackageDefinition(name.substring(0, i));
+}
+}
+return super.findClass(name);
+}
+6.3.4.5 Step 5: Read in the class bytes
+The URL class loader performs this operation for you by consulting the URLs that were passed to its constructor. If you need to adjust the way in which the class bytes are read, you should use the SecureClassLoader class instead.
+6.3.4.6 Step 6: Create the appropriate protection domain
+The URL class loader will create a code source for each class based on the URL from which the class was loaded and the signers (if any) of the class. The permissions associated with this code source will be obtained by using the getPermissions( ) method of the Policy class, which by default will return the permissions read in from the active policy files. In addition, the URL class loader will add additional permissions to that set:
+If the URL has a file protocol, it must specify a file permission that allows all files that descend from the URL path to be read. For example, if the URL is file:///xyz/classes/, then a file permission with a name of /xyz/classes/− and an action list of read will be added to the set of permiss ions. If the URL is a jar file (file:///xyz/MyApp.jar), the name file permission will be the URL itself.
+If you want to associate different permissions with the class, then you should override the getPermissions( ) method. For example, if we wanted the above rules to apply and also allow the class to exit the virtual machine, we'd use this code:
+protected PermissionCollection getPermissions(CodeSource codesource) { PermissionCollection pc = super.getPermissions(codesource);
+pc.add(new RuntimePermission("exitVM"));
+return pc;
+}
+We could completely change the permissions associated with the class (bypassing the Policy class altogether) by constructing a new permission collection in this method rather than calling super.getPermissions( ). The URL class loader will use whatever permissions are returned from this getPermissions( ) method to define the protection domain that will be associated with the class.
+If you need to load bytes from a source that is not a URL (or from a URL for which you don't have a protocol handler, like FTP), then you'll need to extend the SecureClassLoader class. A subclass is required because the constructors of this class are protected, and in any case you need to override the findClass( )
+ 
+The steps to use this class are exactly like the steps for the URLClassLoader class, except for step 5. To implement step 5, you must override the findClass( ) method like this:
+protected Class findClass(final String name) throws ClassNotFoundException {
+// First check if we have permission to access the package.
+// You could remove these 7 lines to skip the optional step 4.
+SecurityManager sm = System.getSecurityManager( );
+if (sm != null) {
+int i = name.lastIndexOf('.');
+if (i != −1) {
+sm.checkPackageDefinition(name.substring(0, i));
+}
+}
+// Now read in the bytes and define the class
+try {
+return (Class)
+AccessController.doPrivileged(
+new PrivilegedExceptionAction( ) {
+public Object run( ) throws ClassNotFoundException {
+byte[] buf = null;
+try {
+// Acutally load the class bytes
+buf = readClassBytes(name);
+} catch (Exception e) {
+throw new ClassNotFoundException(name, e);
+}
+// Create an appropriate code source
+CodeSource cs = getCodeSource(name);
+// Define the class
+return defineClass(name, buf,
+0, buf.length, cs);
+}
+}
+);
+} catch (java.security.PrivilegedActionException pae) { throw (ClassNotFoundException) pae.getException( ); }
+
+The syntax of this method is complicated by the fact that we need to load the class bytes in a privileged block. Depending on your circumstances, that isn't strictly necessary, but it's by far the most common case for class loaders. Say that your class loader loads class A from the database; that class is given minimal permissions. When that class references class B, the class loader will be asked to load class B and class A will be on the stack. When it's time to load the new class bytes, we need to load them with the permissions of the class loader rather than the entire stack, which is why we use a privileged block.
+Notwithstanding, the try block has three operations: it loads the class bytes, it defines a code source for that class, and it calls the defineClass( ) method to create the class. The first two of the opera tions are encapsulated in the readClassBytes( ) and getCodeSource( ) methods; these are methods that
+you must implement.
+Loading the class bytes is an operation left to the reader. The reason for providing your own class loader is that you want to read the class bytes in some special way; otherwise, you'd use the URLClassLoader class. The code source is another matter: we must determine a URL and a set of certificates that should be
+associated with the class.
+In a signed jar file, the certificates are read from the jar file and the URL is the location of the jar file. In Chapter 12, we'll show how to get the certificates from a standard jar file and construct the appropriate URLClassLoader class. The code source is another matter: we must determine a URL and a set of certificates that should be
+associated with the class.
+In a signed jar file, the certificates are read from the jar file and the URL is the location of the jar file. In Chapter 12, we'll show how to get the certificates from a standard jar file and construct the appropriate The defineClass( ) method will call back to the getPermissions( ) method in order to complete the definition of the protection domain for this class. And that's why the URL used to construct the code source can be arbitrary: when you write the getPermissions( ) method, just make sure that you understand what the URL actually is. In default usage, the URL would be used to find entries in the policy files, but since you're defining your own permissions anyway, the contents of the URL don't matter. What matters is that you follow a consistent convention between the definition of your getCodeSource( ) and findClass( ) methods.
+Hence, possible implementations of the getPermissions( ) and getCodeSource( ) methods are as follows:
+
+protected CodeSource getCodeSource(String name) {
+try {
+return new CodeSource(new URL("file", "localhost", name),
+null);
+} catch (MalformedURLException mue) {
+mue.printStackTrace( );
+}
+return null;
+}
+protected PermissionCollection getPermissions(CodeSource codesource) {
+PermissionCollection pc = new Permissions( );
+pc.add(new RuntimePermission("exitVM"));
+return pc;
+}
+If you're reading the class bytes from, say, a database, it would be more useful if you could pass an arbitrary string to construct the code source. That doesn't work directly since the code source requires a URL but the file part of the URL can be any arbitrary string. In this case, we just use the class name.
+Note that the getPermissions( ) method of the SecureClassLoader class does not add the additional permissions that the same method of the URLClassLoader class adds. As a result, we do not call the super.getPermissions( ) 
+
+## Delegation
+As we've mentioned, class loading follows a delegation model. This model permits a class loader to be instantiated with this constructor:
+protected ClassLoader(ClassLoader parent)
+Create a class loader that is associated with the given class loader. This class loader delegates all operations to the parent first: if the parent is able to fulfill the operation, this class loader takes no action. For example, when the class loader is asked to load a class via the loadClass( ) method, it first calls the loadClass( ) method of the parent. If that succeeds, the class returned by the delegate will ultimately be returned by this class. If that fails, the class loader then uses its original logic to complete its task, something like this:
+public Class loadClass(String name) {
+Class cl;
+cl = delegate.loadClass(name);
+if (cl != null)
+return cl;
+// else continue with the loadClass( ) logic
+}
+You may retrieve the delegate associated with a class loader with the following method
+ public final ClassLoader getParent( )
+Return the class loader to which operations are being delegated.
+The class loader that exists at the root of the class loader hierarchy is retrieved via this method:
+Return the system class loader (the class loader that was used to load the base application classes). If a security manager is in place, you must have the getClassLoader runtime permission to use this method.
+
+## Loading Resources
+A class loader can load not only classes, but any arbitrary resource: an audio file, an image file, or anything else. Instead of calling the loadClass( ) method, a resource is obtained by invoking one of these methods:
+public URL getResource(String name)
+public InputStream getResourceAsStream(String name)
+The getResource( ) method calls the getSystemResource( ) method; if it does not find a system resource, it returns the object retrieved by a call to the findResource( ) method (which by default will be null). The getResourceAsStream( ) method simply
+
+
+## Loading Libraries
+Loading classes with native methods creates a call to this method of the ClassLoader class:
+protected String findLibrary(String libname)
+Return the directory from which native libraries should be loaded.
+This method is used by the System.loadLibrary( ) method to determine the directory in which the native library in question should be found. If this method returns null (the default), the native library must be in one of the di
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+package me.todzhang;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+public class StringPermutation {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		System.out.println("--- start ---");
+		System.out.println("-1st approach---result--:");
+		permutation("abcd");
+		System.out.println("-2nd approach--better performance-result--:");
+		permute2("abcd");
+		
+		System.out.println("-3rd approach---result--:");
+		ArrayList<String> list=new ArrayList<String>();
+		list=permutation3("abcd");
+		System.out.println(list.toString());
+	}
+	
+	private static void permutation(String str){
+		permutation("",str);
+	}
+	
+	private static void permutation(String prefix,String str){
+		int n=str.length();
+		if(n==0){
+			System.out.println(prefix);
+		}
+		else{
+			for(int i=0;i<n;i++){
+				permutation(prefix+str.charAt(i),str.substring(0,i)+str.substring(i+1,n));
+			}
+		}
+	}
+	
+	// ---- second approach----
+	// the wrapper method of permute
+	private static void permute2(String str){
+		int len=str.length();
+		boolean[] used=new boolean[len];
+		StringBuilder out=new StringBuilder();
+		char[] in=str.toCharArray();
+		doPermute(in, out, used, len, 0);
+	}
+	
+	private static void doPermute(char[] in, StringBuilder out, boolean[] used, int length, int level){
+		if(level==length){
+			// print out one combination
+			System.out.println(out.toString());
+			return;
+		}
+		
+		for(int i=0;i<length;i++){
+			if(used[i]){
+				// for used place, skip to increase performacne
+				continue;
+			}
+			
+			out.append(in[i]);
+			used[i]=true; // mark this char used
+			doPermute(in, out, used, length, level+1); // recusive call, by increaseing level
+			used[i]=false; // reset this char to unused
+			out.setLength(out.length()-1); // remove the last char
+		}
+	}
+	
+	
+	// third solution:
+	private static ArrayList<String> permutation3(String str){
+		// the result
+		ArrayList<String> res=new ArrayList<>();
+		// if input string's length is 1, return s
+		if(str.length()==1){
+			res.add(str);
+		}
+		else if(str.length()>1){
+			int lastIdx=str.length()-1;
+			// find the last character
+			String last=str.substring(lastIdx);
+			String rest=str.substring(0,lastIdx);
+			
+			// perform permutation on the rest string 
+			// and merge with the last char
+			res=merge(permutation3(rest), last);
+		}
+		return res;
+	}
+	
+	public static ArrayList<String> merge(ArrayList<String> list, String c){
+		ArrayList<String> res=new ArrayList<String>();
+		// loop through all the string in list
+		for (String string : list) {
+			// for each string, insert the last character to all possible positions
+			// and add them to the new list
+			for(int i=0;i<=string.length();++i){
+				String ps=new StringBuffer(string).insert(i, c).toString();
+				res.add(ps);
+			}
+		}
+		return res;
+	}
+	
+	
+
+}
