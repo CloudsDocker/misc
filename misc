@@ -1,0 +1,16 @@
+sudo: super user do. su: user must enter password of target user. sudo : user enter their own password
+
+/etc/sudoers
+
+## Sudoers allows particular users to run various commands as
+## the root user, without needing the root password.
+##
+## Examples are provided at the bottom of the file for collections
+## of related commands, which can then be delegated out to particular
+## users or groups.
+##
+## This file must be edited with the 'visudo' command.
+
+In some system distributions, sudo has largely supplanted the default use of a distinct superuser login for administrative tasks, most notably in some Linux distributions as well as Apple's Mac OS X.[14][15]
+
+visudo is a command-line utility that allows editing the configuration file in a fail-safe manner. It prevents multiple simultaneous edits with locks and performs sanity and syntax checks.
