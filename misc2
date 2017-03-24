@@ -1,0 +1,38 @@
+2017/3/24
+With Spring, you have a few options for asynchronous messaging. In this chapter, we’ll look at how to send and receive messages in Spring using both the Java Message Service (JMS) and the Advanced Message Queuing Protocol (AMQP).
+
+Remoting options such as RMI and Hessian/Burlap are synchronous.
+
+There are two main actors in asynchronous messaging: message brokers and destina¬tions.
+
+But unlike mail addresses, which may indicate a specific person or street address, destinations are less specific. Destinations are only concerned about where messages will be picked up—not who will pick them up. In this way, a destination is like sending a letter addressed “To current resident.”
+
+Although different messaging systems may offer a variety of message-routing schemes, there are two common types of destinations: queues and topics. Each of these is associated with a specific messaging model: either point-to-point (for queues) or publish/subscribe (for topics).
+
+POINT-TO-POINT MESSAGING
+In the point-to-point model, each message has exactly one sender and one receiver, as illustrated in figure 17.3. When the message broker is given a message, it places the message in a queue. When a receiver comes along and asks for the next message in the queue, the message is pulled from the queue and delivered to the receiver. Because the message is removed from the queue as it’s delivered, it’s guaranteed that the message will be delivered to only one receiver.
+Although each message in a message queue is delivered to only one receiver, this doesn’t imply that only one receiver is pulling messages from the queue. It’s likely that several receivers are processing messages from the queue. But they’ll each be given their own messages to process.
+
+PUBLISH-SUBSCRIBE MESSAGING
+In the publish/subscribe messaging model, messages are sent to a topic. As with queues, many receivers may be listening to a topic. But unlike with queues, where a message is delivered to exactly one receiver, all subscribers to a topic receive a copy of the message,
+
+The magazine analogy breaks down when you realize that the publisher has no idea who its subscribers are. The publisher only knows that its message will be pub¬lished to a particular topic—not who’s listening to that topic. This also implies that the publisher has no idea how the message will be processed.
+
+Location independence takes on another interesting side effect in the publish/ subscribe model. Multiple services could all subscribe to a single topic, receiving duplicate copies of the same message. But each service could process that message dif-ferently. For example, let’s say you have a set of services that together process a mes-sage that details the new hire of an employee. One service might add the employee to the payroll system, another adds them to the HR portal, and yet another makes sure the employee is given access to the systems they’ll need to do their job. Each service works independently on the same data that they all received from a topic.
+
+
+2017/3/22
+css notes:
+
+my errors:
+body {
+	background-color: red;	
+}
+
+rather than:
+body {
+	background-color="red";	
+}
+
+1.	there are no double quote surround “red”
+2.	should be semicolon, instead of equals sign
