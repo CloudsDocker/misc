@@ -1,0 +1,31 @@
+2017/4/1
+
+su is not meant to do that -- sudo is.
+
+Open /etc/sudoers.d/custom and write the following:
+
+user-a ALL=(user-b:user-b) NOPASSWD:ALL
+
+
+
+Therefore, if you say "set joe=fred", you've just set the value of joe in your current shell environment. If you then start another process, that process will get it's own environment and will inherit (get a copy of) only the variables that were exported to you and the ones you exported in the current shell. Therefore, the child process will not get the value of "joe", because you didn't export it. In some shells, you had to both "set" and "export" a variable to pass it on to your offspring. You can use just "export joe=fred" in bash as a shortcut.
+
+netstat {--statistics|-s} [--tcp|-t] [--udp|-u] [--raw|-w] [delay
+
+awk '{print $NF}' net | awk -F '\' '{print ($NF-1)}'
+
+
+  grep "ORA-12899" loadDump.log | awk '{split($0,ary,".");print ary[2]}' | uniq –c 
+// -c in uniq means count
+
+
+
+
+--- WAS errrors ----
+java.lang.OutOfMemoryError: Java heap space
+/opt/IBM/WebSphere85/AppServer/profiles/appprofiles/Hss_WAS_Profile/logs/hssInvestSrv/SystemOut.log
+---- > change server.xml e.g. 
+/opt/IBM/WebSphere85/AppServer/profiles/appprofiles/Hss_WAS_Profile//config/cells/cn000tst1129Node02Cell/nodes/hssInvestNode/servers/hssInvestSrv/server.xml
+add following parameters: initialHeapSize="2048" maximumHeapSize="4096"
+<jvmEntries xmi:id="JavaVirtualMachine_1183122130078" verboseModeClass="false" verboseModeGarbageCollection="false" verboseModeJNI="false" runHProf="false" hprofArguments="" debugMode="false" debugArgs="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=7778" genericJvmArguments="" initialHeapSize="2048" maximumHeapSize="4096">
+
