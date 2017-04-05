@@ -1,0 +1,135 @@
+
+Microservices:
+three concepts that are principal to the style:
+Microservices are ideal for big systems
+
+Microservice architecture is goal-oriented
+Something else we can derive from James’ recollection of the day is the focus on a goal rather than just a solution. Microservice architecture isn’t about identifying a specific collection of practices, rather it’s an acknowledgment that software pro‐ fessionals are trying to solve a similar goal using a particular approach.
+Microservices are focused on replaceability
+The revelation that microservices are really about replaceability is the most enlightening aspect of the story. This idea that driving toward replacement of components rather than maintaining existing components get to the very heart of what makes the microservices approach special.
+
+the microservices architectural style as a way of working with systems in which scale is a factor. They are more interested in the goal of improving changeability than finding a universal pattern or process.
+
+Microservices are small, autonomous services that work together. —Sam Newman, Thoughtworks
+Loosely coupled service-oriented architecture with bounded contexts. —Adrian Cockcroft, Battery Ventures
+
+
+They both emphasize some level of independence, limited scope, and interoperability.
+
+A microservice is an independently deployable component of bounded scope that sup‐ ports interoperability through message-based communication. Microservice architec‐ ture is a style of engineering highly automated, evolvable software systems made up of capability-aligned microservices.
+
+
+If you’ve imple‐ mented a service-oriented architecture (SOA), you’ve already embraced the concept of modularity and message-based communication.
+
+If you are considering adopting a microservice architecture for your organization, consider how effective the existing architecture is in terms of changeability and more specifically replaceability.
+
+it is clear that microservice applica¬tions share some important characteristics:
+·	Small in size
+·	Messaging enabled
+·	Bounded by contexts
+·	Autonomously developed
+·	Independently deployable
+·	Decentralized
+·	Built and released with automated processes
+
+
+Two microservices characteristics that you might find especially concerning are decentralization and autonomy. Decentralization means that the bulk of the work done within your system will no longer be managed and controlled by a central body. Embracing team autonomy means trusting your development teams to make their own decisions about the software they produce. The key benefit to both of these approaches is that software changes become both easier and faster—less centraliza‐ tion results in fewer bottlenecks and less resistance to change, while more autonomy means decisions can be made much quicker.
+
+In a microservice architec‐ ture, the services tend to get simpler, but the architecture tends to get more complex. That complexity is often managed with tooling, automation, and process.
+
+More specifically, the real value of microservices is realized when we focus on two key aspects—speed and safety.
+Speed and Safety at Scale and in Harmony. —The Microservices Way
+
+Years ago, most of us released software in the same way that NASA launches rockets. After deliberate effort and careful quality control, our software was burned into a per‐ manent state and delivered to users on tapes, CDs, DVDs, and diskettes.
+
+After all, “speed kills” and in most software shops nobody wants to be responsible for breaking pro‐ duction. Every change is potentially a breaking change
+
+At Scale
+On top of everything else, today’s software architect needs to be able to “think big” when building applications. As we heard earlier in this chapter, the microservices style is rooted in the idea of solving the problems that arise when software gets too big. To build at scale means to build software that can continue to work when demand grows beyond our initial expectations.
+
+Systems that can work at scale don’t break when under pressure; instead they incorporate built-in mechanisms to increase capacity in a safe way. This added dimension requires a special perspective to build‐ ing software and is essential to the microservices way.
+
+The need to balance these ideals is something you were probably taught at a young age and you are probably familiar with the well-worn proverb, “haste makes waste.”
+
+We’ve found that all of the characteristics that we associate with microservice archi‐ tecture (i.e., replaceability, decentralization, context-bound, message-based commu‐ nication, modularity, etc.)
+
+
+Organizations that succeed
+ 
+with microservice architecture are able to maintain their system stability while increasing their change velocity. In other words, they created a harmony of speed and safety that works for their own context.
+
+the microservices way, a goal-driven approach to building adaptable, reliable software.
+
+
+
+
+Authentication is essentially asking, "Are you who you say you are?"
+Authorization is simply, once we know who you are, "What are you allowed to do?"
+
+FAQs for SSL Certificates
+ 
+What is Secure Sockets Layer or SSL?
+The Secure Sockets Layer (SSL) is a security protocol used by Web browsers and Web servers to help users protect their data during transfer. An SSL Certificate contains a public and private key pair as well as verified identification information. When a browser (or client) points to a secured domain, the server shares the public key with the client to establish an encryption method and a unique session key. The client confirms that it recognizes and trusts the issuer of the SSL Certificate. This process is known as the "SSL handshake" and it can begin a secure session that protects message privacy and message integrity. 
+ 
+ 
+What is encryption and how does it protect my business and my customers?
+Encryption is a mathematical process of coding and decoding information. Encryption ensures that information is scrambled in transit so that only the intended recipient can decode it. The number of bits (40-bit, 56-bit, 128-bit, 256-bit) tells you the size of the key. Like a longer password, a larger key has more possible combinations. In fact, 128-bit encryption is one trillion times one trillion times stronger than 40-bit encryption. At current computing speeds, a hacker with the time, tools, and motivation to attack would require a trillion years to break into a session with 128-bit encryption. SSL Certificates with server-gated cryptography (SGC) enable 128- or 256-bit encryption for over 99.9% of Internet users. 
+ 
+ 
+What is authentication and why is it important to SSL?
+Authentication is 3rd party verification of a Web site's identity to establish trust. Before Web visitors share username and password, payment information or other personal data, they need to know that they can trust the Web site requesting it. A company logo or brand name is not enough. These can be faked. To protect against fraud and phishing sites, Web visitors look for proof that your business entity and Web site are legitimate. This can be provided by a VeriSignÂ® SSL Certificate. Similar to the way a government agency verifies a birth date before issuing an identification card, an SSL provider (Certificate Authority) verifies an organization's right to use a domain name and other required identification information. SSL Certificates are uniquely issued to a specific domain and Web server. 
+
+ 
+How can I optimise my Web site for trust and security?
+VeriSign SSL Certificates with additional trust features offer more than encryption and authentication for your online business. We help drive traffic to your site and reduce abandoned transactions. Our premium SSL Certificate, the VeriSign Trustâ„¢ Seal, VeriSign Seal-in-Searchâ„¢ technology, and daily Web site malware scanning work together to help assure your customers that your site is safe.  
+
+ 
+What is the VeriSign Trust Seal?
+The VeriSign Trust Seal is a dynamic, animated graphic that displays on Web pages secured by VeriSign SSL Certificates and Web sites authenticated by VeriSign. When users click the VeriSign seal, it opens a VeriSign-generated verification page containing information about your VeriSign SSL Certificate, your organization, and the status of your malware scan. The VeriSign seal, the most recognized trust mark on the Internet, is viewed up to 250 million times a day on more than 90,000 Web sites in 160 countries and in search results on enabled browsers as well as partner shopping sites and product review pages. 
+
+ 
+Do all SSL Certificates provide the same security and trust for our business?
+VeriSign SSL Certificates provide more security and trust at no additional cost. Our premium SSL Certificate, the VeriSign Trust Seal, VeriSign Seal-in-Search technology, and daily Web site malware scanning work together to help assure your customers that your site is safe from search to browse to buy. Seal-in-Search displays the VeriSign Trust Seal next to your link on browsers enabled with a free plug-in as well as on partner shopping sites and product review pages. The seal differentiates your link in search and shows that malicious code has not been detected in a daily malware scan. 
+
+ 
+Why do different SSL Certificates contain different information?
+Certificate Authorities use different authentication methods and levels to verify information provided by organizations. The most basic SSL Certificate only verifies domain name control, a low-level of authentication that may be used by fraudsters to make their sites appear trusted. VeriSign, the leading Certificate Authority, secures more than one million Web servers worldwide and is well known and trusted because of our rigorous authentication methods and highly reliable infrastructure. VeriSignÂ® SSL Certificates are issued with either full business authentication or Extended Validation (EV) authentication. The VeriSign Trust Seal verification page also includes the status of your daily malware scan. 
+
+ 
+How do consumers view the authentication information?
+When a browser connects to a server, the server sends the identification information to the browser. To view a Web sites' credentials do one of the following: 
+Click the closed padlock in a browser window 
+Click the trust mark (such as the VeriSign Trustâ„¢ Seal) 
+Look in the green address bar* 
+*Only SSL Certificates with EV trigger high-security Web browsers to display your organization's name in a green address bar and show the name of the Certificate Authority that issued it. 
+ 
+ 
+Do VeriSign SSL Certificates work with all browsers?
+Most Web site users do not know which Certificate Authorities to trust so they rely on their Web browsers to help them. An SSL Certificate issued by a Certificate Authority that a Web browser does not recognize or trust will generate a security alert. As the leading Certificate Authority, VeriSignÂ® SSL Certificates work with virtually all popular Web browsers used since 1996. 
+Back to Top 
+
+  
+What does VeriSign do to verify my right to use a domain name?
+VeriSign first tries to authenticate your company's management responsibility through publicly available domain name registration information. If we cannot automatically authenticate your domain name control, we require an authorization letter from that domain's owner. This step prevents applicants from fraudulently or accidentally obtaining SSL Certificates for domains that do not belong to them. 
+Back to Top 
+
+ 
+How long does verification take?
+Authentication for new certificates could take as little as 1 hour or up to several days, depending on the verification information you provide and whether or not your certificates are pre-approved. 
+If your organization is the legal holder of the domain, you can expect to receive your certificate within 1 hour of your request. 
+VeriSignÂ® Trust Center Enterprise Account stores pre-approved domain, organizational and contact information. When you submit a certificate request that contains the authenticated information, VeriSign instantly issue your certificate. 
+Processing times for EV SSL Certificates may take longer due to additional verification requirements mandated by the Extended Validation (EV) SSL Guidelines.
+ 
+ 
+What is EV SSL?
+In 2006, the CA/Browser Forum, a group of leading SSL Certificate Authorities (CAs) and browser vendors, approved Extended Validation (EV) SSL Guidelines, standard practices for certificate validation. To issue an EV SSL Certificate, a CA must adopt the EV practices and pass an audit. Browsers were enhanced to make it easy for Web site visitors to recognize the higher standard of EV SSL. A site secured by an SSL Certificate with EV triggers high-security Web browsers to display the organizationâ€™s name in a green address bar and show the name of the Certificate Authority that issued it. The browser and the Certificate Authority control the display, making it difficult for phishers and counterfeiters to hijack your brand and your customers.  
+
+ 
+What is a Certificate Signing Request or CSR?
+The CSR is a string of text generated by your server software. You provide this string of text to VeriSign during the enrollment process to enable VeriSign to issue an SSL Certificate unique to your Web server. You will need to know what kind of server software is running on your Web server to generate a CSR. 
+
+ 
+Can I secure multiple servers with a single certificate?
+Sharing certificates on multiple servers increases risk of exposure. Auditing becomes more complex, reducing accountability and control. If a private key becomes compromised, it can be difficult to trace and all servers sharing that certificate are at risk. Because sharing certificates degrades security, the VeriSign certificate subscriber agreement prohibits customers from using a certificate on more than one physical server or device at a time, unless the customer has purchased additional server licenses. VeriSign™s licensing policy allows licensed certificates to be shared in the following configurations: redundant server backups, server load balancing, and SSL accelerators. See About SSL Certificate Licensing. 
+
+
