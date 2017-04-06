@@ -1,0 +1,67 @@
+
+Standard Firewall Topology
+When a connectivity between an untrusted/ semi-trusted party and a trusted party is established, a firewall is needed.
+1. A pair of Nokia firewall configured with VRRP (Virtual Router Redundancy Protocol).
+2. A dedicated log server called CLM (Customer Log Module) has to be installed at a dedicated segment of firewall for auditing and troubleshooting.
+
+
+	Authentication – a process to prove the identity of someone
+	Authorization – a process to give permission or access to authenticated users
+	Single Sign On – is a method of access control that enables a user to authenticate once and gain access to the resources of multiple software systems. 
+
+
+
+The Generic Security Service Application Program Interface (GSSAPI, also GSS-API) is an application programming interface for programs to access security services.
+The GSSAPI, by itself, does not provide any security. Instead, security-service vendors provide GSSAPI implementations - usually in the form of libraries installed with their security software. These libraries present a GSSAPI-compatible interface to application writers who can write their application to use only the vendor-independent GSSAPI. If the security implementation ever needs replacing, the application need not be rewritten.
+
+The definitive feature of GSSAPI applications is the exchange of opaque messages (tokens) which hide the implementation detail from the higher-level application. The client and server sides of the application are written to convey the tokens given to them by their respective GSSAPI implementations. GSSAPI tokens can usually travel over an insecure network as the mechanisms provide inherent message security. After the exchange of some number of tokens, the GSSAPI implementations at both ends inform their local application that a security context has been established.
+Once a security context is established, sensitive application messages can be wrapped (encrypted) by the GSSAPI for secure communication between client and server. Typical protections guaranteed by GSSAPI wrapping include confidentiality (secrecy) and integrity (authenticity). The GSSAPI can also provide local guarantees about the identity of the remote user or remote host.
+
+Limitations of the GSSAPI include that it standardizes only authentication, and not authorization, and that it assumes a client–server architecture.
+
+Relationship to Kerberos[edit]
+The dominant GSSAPI mechanism implementation in use isKerberos. Unlike the GSSAPI, the Kerberos API has not been standardized and various existing implementations use incompatible APIs. The GSSAPI allows Kerberos implementations to be API compatible.
+
+Simple and Protected GSSAPI Negotiation Mechanism(SPNEGO), often pronounced "spenay-go", is a GSSAPI"pseudo mechanism" used by client-server software to negotiate the choice of security technology. SPNEGO is used when a client application wants to authenticate to a remote server, but neither end is sure what authentication protocols the other supports. The pseudo-mechanism uses a protocol to determine what common GSSAPI mechanisms are available, selects one and then dispatches all further security operations to it. This can help organizations deploy new security mechanisms in a phased manner.
+
+SPNEGO's most visible use is in Microsoft's "HTTP Negotiate "authentication extension. It was first implemented in Internet Explorer 5.01 and IIS 5.0 and provided single sign-oncapability later marketed as Integrated Windows Authentication. The negotiable sub-mechanisms included NTLM and Kerberos, both used in Active Directory. The HTTP Negotiate extension was later implemented with similar support in:
+
+
+ 
+Dynamic Host Configuration Protocol (DHCP)
+	DHCP provides dynamic configuration such as IP Address, default gateway, DNS Servers, Time Server, Options Template…etc.)
+	Provides temporary IP addresses for a limited time
+
+	Software
+	VitalQIP™ DNS/DHCP IP Address Management Software
+	First developed by Quadritek, then sold to Alcatel-Lucent
+	Supported by Silicomp Asia (Orange Business Services)
+	First deployed in ASP in 2001
+	Functions
+	Allocate dynamic IP addresses
+	Manage IP address for Network Accounting (GTMS)
+	Manage internal Domain Name (FQDN) mapping
+	Provide AD FQDN service in both internal and DMZ
+	QDNS and QDHCP servers are located in major ASP countries
+
+QIP Workflow - Dynamic DNS Update
+	1a	A VitalQIP User, via Management menu, allocates a range of address on a subnet to be 	defined to a particular DHCP Server.
+	1b 	Network Services generate configuration files.
+	2 	The network object uses the DHCP Protocol to configure its network attributes.
+	3 	The DHCP Server immediately updates VitalQIP with the MAC address, IP address and 	workstation name.
+	4	The DHCP server updates DNS dynamically
+	5	VitalQIP and the DHCP server and DNS server can be synchronized at prescheduled intervals 	if required.
+
+
+The “monolith first” approach also appears to `follow Gall’s Law`, which states that, “A complex system that works is invariably found to have evolved from a simple system that worked.” However, is a monolithic application architecture the only simple system starting point? Is it possible to start simple with a microservice architecture?
+In fact, `the complexity of a software system is driven by its scale`. Scale comes in the form of functional scope, operational magnitude, and change frequency. The first companies to use microservice architecture made the switch from monolithic appli‐ cations once they passed a certain scale threshold.
+
+Modularity ... is to a technological economy what the division of labor is to a manu‐ facturing one.
+—W. Brian Arthur, author of The Nature of Technology
+
+At its most basic level, microservice architecture is about breaking up an application or system into smaller parts. A software system that is modularized arbitrarily will obviously have some limitations, but there is still a potential upside. Network-accessible modularization facilitates automation and provides a concrete means of abstraction. Beyond that, some of the microservice architecture benefits discussed earlier already apply at this base layer.
+
+
+The greater the cohesion of individual modules in the system, the lower the coupling between modules will be.
+
+
