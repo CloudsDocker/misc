@@ -1,0 +1,895 @@
+2017/4/13
+
+On the other hand, all database developers and administrators know the ACID acronym. It says that database transactions should be:
+•	Atomicity: Everything in a transaction either succeeds or is rolled back
+•	Consistency: Every transaction must leave the database in a consistent state
+•	Isolation: Each transaction that is running cannot interfere with other transactions
+•	Durability: A completed transaction gets persisted, even after applications restart
+At first glance, these qualities seem vital. In practice, however, for many applications, they are incompatible with the availability and performance in very large environments. As an example, let's suppose that you have developed an online book store and you want to display how many of each book you have in your inventory. Each time a user is in the process of buying a book, you need to lock part of the database until they finish so that every visitors from the world will see the exact inventory numbers. That works just fine for a small homemade site but not if you run Amazon.com. For this reason, when we talk about NoSQL databases, or, generally, if we are designing distributed systems, we might have to look beyond the traditional ACID properties. As stated by the CAP theorem, coined by Eric Brewer, the following set of requirements are truly essential when designing applications for distributed architectures:
+•	Consistency: This means the database mostly remains adherent to its rules (constraints, triggers, and so on) after the execution of each operation and that any future transaction will see the effects of the earlier transactions committed. For example, after executing an update, all the clients see the same data.
+•	Availability: Each operation is guaranteed a response—a successful or failed execution. This, in practice, means no downtime.
+•	Partition tolerance: This means the system continues to function even if the communication among the servers is temporarily unreliable (for example, the servers involved in the transaction may be partitioned into multiple groups, which cannot communicate with one another).
+In practice, as it is theoretically impossible to have all three requirements met, a combination of two must be chosen and this is usually the deciding factor in what technology is used, as shown in the following figure:
+
+
+MongoDB, on the other hand, is consistent by default (C). This means if you perform a write on the database followed by a read, you will be able to read the same data (assuming that the write was successful).
+Besides consistency, MongoDB leverages Partition Tolerance (P) by means of replica sets. In a replica set, there exists a single primary node that accepts writes, and asynchronously replicates a log of its operations to other secondary databases.
+However, not all NoSQL databases are built with the same focus. An example of this is CouchDB. Just like MongoDB, it is document oriented and has been built to scale across multiple nodes easily; on the other hand, while MongoDB (CP) favors consistency, CouchDB favors availability (AP) in spite of consistency. CouchDB uses a replication model called Eventual Consistency. In this model, clients can write data to one database node without waiting for acknowledgment from other nodes.
+
+If you are coming from an RDBMS background, you might be surprised that we can switch to a new database without formerly creating it. Databases and collections are first created when documents are actually inserted. Hence, individual collections and databases can be created at runtime just as the structure of a document is known.
+If you want to check the list of available databases, then you can use the show dbs command:
+>show dbs
+local     0.78125GB
+test      0.23012GB
+As you can see, the database we created (sampledb) is not present in the list. To display the database, you need to insert at least one document into it. 
+
+Updating documents
+In order to update an existing document, you need to provide two arguments:
+•	The document to update
+•	How the selected documents should be modified
+The update supports an additional option, which can be used to perform a more complex logic. For example, what if you wanted to update the record if it exists, and create it if it doesn't? This is called upsert and can be achieved by setting the upsert option to true, as in the following command line:
+> db.users.update({user: "frank"}, {age: 40},{ upsert: true} )
+
+
+by using the $unset option. In the following update, we are removing the age key to all documents whose name key equals to owen.
+> db.users.update({name: "owen"}, {$unset : { "age" : 1} })
+The opposite of the $unset operator is $push, which allows you to append a value to a specified field. So here is how you can restore the age key for the user owen:
+
+If you need to delete a whole set of documents, then you can use theremove operator. When used without any parameter, it is equivalent to the TRUNCATE command in SQL terms:
+
+Just like the TRUNCATE statement in SQL, it just removes documents from a collection. If you want to delete the collection, then you need to use the drop() method, which deletes the whole collection structure, including any associated index:
+> db.users.drop()
+
+The next one in the list is the skip function, which skips the first n documents in a collection. For example, here is how to skip the first document in a search across the users collection:
+	
+-----RTC----
+
+Take the guesswork out of build processes
+
+
+The IBM Rational Build Forge automates, orchestrates, manages, and tracks all processes between each handoff within the assembly line of software development, creating an automated software factory.
+
+Integrates into your current environment and supports major development languages, scripts, tools, and platforms.
+
+Features and capabilities
+
+IBM Rational Build Forge is an adaptive process execution framework that automates, orchestrates, manages, and tracks all the processes between each handoff within the assembly line of software development, creating an automated software factory. Rational Build Forge integrates into your current environment and supports major development languages, scripts, tools, and platforms; allowing you to continue to use your existing investments while adding valuable capabilities around process automation, acceleration, notification, and scheduling
+
+Process automation
+
+Version 7.1.3 Version 8.0.0 Version 7.1.2 
+
+Version 7.1.3
+
+
+Process automation enables businesses to choreograph processes across disparate applications, people, and systems to remove inefficiencies, optimize costs, ensure compliance, and boost productivity. Build Forge automates, orchestrates, manages, and tracks processes within the assembly line of product development. It is commonly used to automate software build and package processes. 
+
+This section describes a human model for processes and maps to Build Forge features.
+
+Build Forge components to install
+
+To use Build Forge, these components must be installed:
+•Database: Build Forge uses the database to store all of the objects that it uses. 
+•Build Forge: a set of technologies that govern access to the database, run UI code, and perform the work of running jobs.
+•Agents: you install agent software on each host that will perform work. 
+•Web Browser: users typically access Build Forge through a console presented in a web browser.
+
+
+Build Forge:
+•Bill of Materials: the Bill of Materials (BOM) contains information about job steps and step manifests. You can use the .bom dot command to format additional information for the BOM and write data to it. You can use the .scan dot command to add baselines and checkpoints to the BOM.
+
+----  English ---
+choreograph: v.设计舞蹈动作；create direct engineer make mastermind orchestrate
+Process automation enables businesses to `choreograph processes across disparate applications`, people, and systems to `remove inefficiencies, optimize costs, ensure compliance, and boost productivity`. Build Forge automates, orchestrates, manages, and tracks processes within the assembly line of product development. It is commonly used to automate software build and package processes.
+
+
+
+
+2017/4/11
+
+Agile is a ‘systems-thinking’ solution
+Did you realize that Agile was designed by software engineers, for software engineers?
+It’s a ‘bottom-up’ utopia, just a self-crganising team and a business leader. With no need for managers.
+
+
+
+
+
+
+
+
+
+
+
+Unfortunately, it Solves the Wrong Problem
+Senior managers want AGILE DELIVERY
+oWorking software delivered in short order
+oFlexibility to change priorities
+oHappy stakeholders
+PREDICTABLITYto control and make plans 
+oBecause they are running a complicated machine
+oMade-up of individual interdependent machines
+
+We can trust teams that are predictable
+
+
+
+The Sausage Machine “Systems-Thinking” Model
+Process
+Input
+Output
+Process is sponsored externally as a component 
+oPerformance and efficiency are measurable
+oEasy to scale-up or replace 
+Manager responsible for both internal & external performance
+
+Sloths are Single-Minded
+They are lightweight, highly efficient, predictable, adaptable, non-wasteful and really rather charming
+
+
+------R-------
+
+rle(x)
+
+# rle(x) stands for 'run length encoding'. It will be easiest to explain what this means through examples. It will help with pset 2 in the question that asks you to estimate the probability of runs in a sequence of Bernoulli (coin flips) trials.  A run means a streak of repeats of the same number.  
+
+# First let's make a small sequence where we can see the runs
+> x = c(1,1,1,2,3,3,3,1,1)
+# We can describe this sequence as: three 1's, then one 2, then three 3's and two 1's.
+
+# This is exactly what rle(x) shows us
+> y = rle(x)
+> y
+Run Length Encoding
+  lengths: int [1:4] 3 1 3 2
+  values : num [1:4] 1 2 3 1
+# The values vector shows the values in the order they appeared. In this case the values of x are: 1, 2, 3, 1.
+
+
+to increase system performance: 
+https://confluence.hk.hsbc/display/EQD/New+Joiner+Guide
+enter “systempropertiesperformance” in cmd and chose custom, then deselect all items.
+
+
+/*
+* Find Minimum in Rotated Sorted Array
+Suppose a sorted array is rotated at some pivot unknown to you beforehand. 
+(i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2). Find the minimum element.
+You may assume no duplicate exists in the array.
+*/
+public class FindMinInRotatedSortedArray{
+	
+	public static void main(String[] args){
+		System.out.println("=== start ===");
+int[] ary=new int[]{4,5,6,7,0,1,2};
+System.out.println("---- the smallest value is:"+ findMin(ary,0,ary.length-1));
+
+//		int min=Integer.MIN_VALUE;
+	}
+	
+	// use approach of divide-and-conqure
+	private static int findMin(int[] a, int start, int end){
+		if(end==start)
+			return a[start];
+		int mid= start+ (end-start)/2;
+		if(a[mid]>a[start]){
+// the smallest in right part
+		return findMin(a,mid+1,end);
+	}else {
+	return findMin(a,start,mid);
+}
+
+
+	}
+	
+}
+
+
+
+
+2017/4/10
+
+The X Window System (X11, or shortened to simply X) is a windowing system for bitmap displays, common on UNIX-like computer operating systems.
+
+
+package me.todzhang;
+
+public class KSum {
+    /**
+     * @param A: an integer array.
+     * @param k: a positive integer (k <= length(A))
+     * @param target: a integer
+     * @return an integer
+     */
+    public int  kSum(int A[], int k, int target) {
+        int n = A.length;
+        int[][][] f = new int[n + 1][k + 1][target + 1];
+        for (int i = 0; i < n + 1; i++) {
+            f[i][0][0] = 1;
+        }
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= k && j <= i; j++) {
+                for (int t = 1; t <= target; t++) {
+                    f[i][j][t] = 0;
+                    if (t >= A[i - 1]) {
+                        f[i][j][t] = f[i - 1][j - 1][t - A[i - 1]];
+                    }
+                    f[i][j][t] += f[i - 1][j][t];
+                } // for t
+            } // for j
+        } // for i
+        return f[n][k][target];
+    }
+}
+
+
+
+LifeXplorer
+I can't help myself dreaming the same dream.
+Main menu
+Skip to primary content
+Skip to secondary content
+•	Home
+•	Projects
+o	Runner Stats
+	Version Log
+	Libraries Used & Special Thanks
+o	CMM Interpreter
+•	About
+Post navigation
+← Previous Next →
+★[LeetCode] 3Sum, 4Sum and k-sum
+Posted on 2014/07/27 by Mr. Who
+Given an array S of n integers, are there elements a, b, c in S such that a + b + c = 0? Find all unique triplets in the array which gives the sum of zero.
+Note:
+•	Elements in a triplet (a,b,c) must be in non-descending order. (ie, a ≤ b ≤ c)
+•	The solution set must not contain duplicate triplets.
+
+1
+2
+3
+4
+5	    For example, given array S = {-1 0 1 2 -1 -4},
+ 
+    A solution set is:
+    (-1, 0, 1)
+    (-1, -1, 2)
+–
+
+Explanation:
+Trying to brute-forcely solve this problem would give you O(N^3) time complexity, so never think about it. Previously, we had a O(N) solution to 2Sum problem, we can solve 3Sum by splitting it into two parts. The first step is to pick out a number n1, the second step is to invoke 2Sum solution, feeding the target with (0 – n1). The first step would take O(N) time, the second one would take O(N) time, too, so the overall time complexity would be O(N^2). Besides, to avoid duplicate triples, we need an ordered input array, which take O(N log N) time.
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37	public class Solution {
+    public List<List<Integer>> threeSum(int[] num) {
+        Arrays.sort(num);
+        Set<List<Integer>> result = new HashSet<List<Integer>>();
+        for (int i=0; i<num.length; i++) {
+            for(List<Integer> l : twoSum(0 - num[i], num, i+1)) {
+                if (l.get(0) + l.get(1) + num[i] == 0) {
+                    l.add(0, num[i]);
+                    result.add(l);
+                }
+            }
+        }
+        return new ArrayList<List<Integer>>(result);
+    }
+    
+    private List<List<Integer>> twoSum(int target, int[] num, int start_index) {
+        HashSet set = new HashSet();
+        List<List<Integer>> rt = new LinkedList<List<Integer>>();
+        for (int i=start_index; i<num.length; i++) {
+            if (set.contains(target - num[i])) {
+                List tmp = new LinkedList();
+                tmp.add(target - num[i]);
+                tmp.add(num[i]);
+                rt.add(tmp);
+                set.remove(num[i]);
+                set.remove(target - num[i]);
+            }
+            else {
+                if ((i > start_index) && (num[i-1] == num[i])) {
+                    continue;
+                }
+                set.add(num[i]);
+            }
+        }
+        return rt;
+    }
+}
+What’s more?
+From the 3Sum, we know that 3Sum can actually be decomposed to 2Sum, in the same way, 4Sum can be decomposed to 3Sum, then 2Sum…. How about K sum? Given an array, find all K-number-combinations, such that n_1+n_2+…+n_k = T. This is exactly what recursion is for.
+Here is the code in which a generic solution to kSum problem is presented. Solved by a friend.
+The time complexity can be computed as follows. Assumed T(k, N) is the time when the array size is N, and in the k sum problem. Then T(k, N) = N * T(k-1, N-1), and T(0, N) = 1. Thus, the overall time complexity of k sum solution is O(k, N) = N * (N-1) * … * (N-k+1) = O(N^k), so to 4sum, the time complexity is O(N^4).
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34	public class Solution {
+    private int total_length;
+    private int[] num;
+ 
+    public List<List<Integer>> threeSum(int[] num) {
+        Arrays.sort(num);
+        this.num = num;
+        this.total_length = num.length;
+        return kSum(3, 0, 0);
+    }
+ 
+    private List<List<Integer>> kSum(int length, int target, int start_index) {
+        List<List<Integer>> result = new LinkedList<List<Integer>>();
+        if (length == 0) {
+            if (target == 0) {
+                // if we find the target,
+                // open an entry to store the whole path
+                result.add(new LinkedList());
+            }
+            return result;
+        }
+        
+        for (int i = start_index; i < total_length - length + 1; i++) {
+            if ((i > start_index) && (num[i] == num[i - 1])) {
+                continue;
+            }
+            for (List<Integer> partial_result : kSum(length - 1, target - num[i], i+1)){
+                partial_result.add(0, num[i]);
+                result.add(partial_result);
+            }
+        }
+        return result;
+    }
+}
+Since twoSum’s time complexity is almost O(N), we can further optimize this code by using the solution to twoSum, to handle the case in which length == 2. As follows,
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50	    private List<List<Integer>> kSum(int length, int target, int start_index) {
+        List<List<Integer>> result = new LinkedList<List<Integer>>();
+        if (length == 0) {
+            if (target == 0) {
+                result.add(new LinkedList());
+            }
+            return result;
+        }
+        if (length == 2) {
+            for (List<Integer> r : twoSum(target, start_index)) {
+                if (r.get(0) + r.get(1) == target) {
+                    result.add(r);
+                }
+            }
+            return result;
+        }
+        
+        for (int i = start_index; i < total_length - length + 1; i++) {
+            if ((i > start_index) && (num[i] == num[i - 1])) {
+                continue;
+            }
+            for (List<Integer> partial_result : kSum(length - 1, target - num[i], i+1)) {
+                partial_result.add(0, num[i]);
+                result.add(partial_result);
+            }
+        }
+        return result;
+    }
+ 
+    private List<List<Integer>> twoSum(int target, int[] num, int start_index) {
+        HashSet set = new HashSet();
+        List<List<Integer>> rt = new LinkedList<List<Integer>>();
+        for (int i=start_index; i<num.length; i++) {
+            if (set.contains(target - num[i])) {
+                List tmp = new LinkedList();
+                tmp.add(target - num[i]);
+                tmp.add(num[i]);
+                rt.add(tmp);
+                set.remove(num[i]);
+                set.remove(target - num[i]);
+            }
+            else {
+                if ((i > start_index) && (num[i-1] == num[i])) {
+                    continue;
+                }
+                set.add(num[i]);
+            }
+        }
+        return rt;
+    }
+Now the time complexity of the generic kSum solution should be O(N^(k-1)) since we can combine the T(2, N) and T(1, N)’s time complexity to O(N).
+Now, this solution seems to have the best theoretical time complexity, because no matter what the k is, we got to pick out k numbers from a N-array.
+However…
+This code would get Time Limit Exceeded on LeetCode OJ. At the beginning, I thought this is weird to have such a hard limitation, LeetCode might only accept the hashmap way, in which we combine every 2 twoSum-pairs to see if their sum is equal to target.
+This solution has a O(N^2 logN) time complexity, because it utilizes twoSum whose time complexity is O(N logN), and map.containsKey requires O(logN) time.
+You can find the original solution in C++ in here, it used some C++ 11 features. I implemented it again using Java, below is the code.
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50	    public List<List<Integer>> fourSum(int[] num, int target) {
+        // Since we use set here, we don't need to dedup data
+        Set<List<Integer>> result = new HashSet<List<Integer>>();
+        Arrays.sort(num);
+        Map<Integer, Set<Pair>> map = new HashMap<Integer, Set<Pair>>();
+        for (int i=0; i<num.length; i++) {
+            // Note the order of these two for-loops is critical
+            for (int j=i+1; j<num.length; j++) {
+                int pairSum = num[i] + num[j];
+                if (map.containsKey(target - pairSum)) {
+                    for (Pair p : map.get(target - pairSum)) {
+                        List l = new LinkedList();
+                        l.add(p.first);
+                        l.add(p.second);
+                        l.add(num[i]);
+                        l.add(num[j]);
+                        result.add(l);
+                    }
+                }
+            }
+            for (int j=0; j<i; j++) {
+                int a = num[j], b = num[i];
+                if (!map.containsKey(a+b)) {
+                    map.put(a+b, new HashSet());
+                }
+                map.get(a+b).add(new Pair(a, b));
+            }
+        }
+        return new ArrayList<List<Integer>>(result);
+    }
+    class Pair {
+        Integer first;
+        Integer second;
+        public Pair(int first, int second) {
+            this.first = first;
+            this.second = second;
+        }
+        @Override
+        public int hashCode() {
+            return this.first.hashCode() + this.second.hashCode();
+        }
+        @Override
+        public boolean equals(Object d){
+            if (!(d instanceof Pair)) {
+                return false;
+            }
+            Pair p = (Pair) d;
+            return (this.first == p.first) && (this.second == p.second);
+        }
+    }
+Although it is faster, this solution seems to be only good for 4sum problem, so the generic solution still looks much better than other ones.
+Wait,
+I’m gonna refer you to here, in one word, the time complexity of k-sum solution can be much lower than anything above. It did take me a bunch of time to implement this algorithm, below is the code. Using this code can solve 3sum, 4sum, and actually k-sum in O(n^(k/2) logn) (even k)or O(n^((k-1)/2+1)) (odd k). The code will be modified by WordPress every time I revised this post, the List<List<Integer> will become List<List>, just a note here.
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101	List<List> rt = new LinkedList<List>();
+public List<List> fourSum(int[] num, int target) {
+    Arrays.sort(num);
+    return kSum(num, 4, target);
+}
+private List<List> kSum(int[] n, int k, int target) {
+    Set<List> result = new HashSet<List>();
+    if (n.length < k) {
+        return new LinkedList<List>(result);
+    }
+    int patch = k % 2;
+    
+    List<List> sumHalf = combine((k - patch) / 2, 0, n.length - 1);
+    HashMap<Integer, List<List>> map = new HashMap<Integer, List<List>>();
+    
+    for (List l : sumHalf) {
+        int sum = sumList(l, n);
+        if (!map.containsKey(sum)) {
+            map.put(sum, new LinkedList<List>());
+        }
+        map.get(sum).add(0, l);
+    }
+ 
+    if (patch == 0) {
+        for (Integer i : map.keySet()) {
+            if (map.containsKey(target - i)) {
+                for (List li : map.get(i)) {
+                    for (List lj : map.get(target - i)) {
+                        if (li.get(li.size() - 1) >= lj.get(0)) {
+                            break;
+                        }
+                        List element = new LinkedList();
+                        for (Integer id : li) {
+                            element.add(n[id]);
+                        }
+                        for (Integer id : lj) {
+                            element.add(n[id]);
+                        }
+                        result.add(element);
+                    }
+                }  
+            }
+        }
+    }
+    else {
+        for (int split = 0; split < n.length; split ++) {
+            for (Map.Entry<Integer, List<List>> i : map.entrySet()) {
+                int wanted = target - i.getKey() - n[split];
+                if (map.containsKey(wanted)) {
+                    for (List li : i.getValue()) {
+                        if (li.get(li.size() - 1) >= split) {
+                            continue;
+                        }
+                        for (List lj : map.get(wanted)) {
+                            if (lj.get(0) <= split) {
+                                break;
+                            }
+                            List element = new LinkedList();
+                            for (Integer id : li) {
+                                element.add(n[id]);
+                            }
+                            element.add(n[split]);
+                            for (Integer id : lj) {
+                                element.add(n[id]);
+                            }
+                            result.add(element);
+                        }
+                    }  
+                }
+            }
+        }
+    }
+    
+    return new LinkedList<List>(result);
+}
+ 
+// get the index combinations with size k from [start, end]
+private List<List> combine(int k, int start, int end) {
+    rt.clear();
+    combineHelper(k, start, end, new ArrayList());
+    return new ArrayList<List>(rt);
+}
+private void combineHelper(int k, int start, int end, ArrayList comb) {
+    if (k == 0) {
+        rt.add(new ArrayList(comb));
+        return;
+    }
+    for (int i = start; i <= end; i ++) {
+        comb.add(i);
+        combineHelper(k - 1, i + 1, end, comb);
+        comb.remove(comb.size() - 1);
+    }
+}
+ 
+private int sumList(List tup, int[] num) {
+    int sum = 0;
+    for (Integer i : tup) {
+        sum += num[i];
+    }
+    return sum;
+}
+LifeXplorer © 2012-2014
+ 
+Related Posts
+•	[LeetCode] Sudoku Solver (0)
+•	[LeetCode] Flatten Binary Tree to Linked List (0)
+•	[LeetCode] Path Sum II (0)
+•	[LeetCode] Combinations (0)
+Zemanta
+This entry was posted in 刷题刷题 and tagged Java, LeetCode, Recursion by Mr. Who. Bookmark the permalink.
+Leave a Reply
+Your email address will not be published. Required fields are marked *
+Name * 
+Email * 
+Website 
+Comment 
+You may use these HTML tags and attributes: <a href="" title=""> <abbr title=""> <acronym title=""> <b> <blockquote cite=""> <cite> <code class="" title="" data-url=""> <del datetime=""> <em> <i> <q cite=""> <s> <strike> <strong> <pre class="" title="" data-url=""> <span class="" title="" data-url="">
+
+Search
+Search  
+Translation
+不转换 简体中文 繁體中文
+Categories
+•	塔乎来乎
+o	从未长肉
+o	刷题刷题
+o	贪得无厌
+•	折柳即闻歌
+o	书海泡妞
+o	手舞足蹈
+o	技术扯淡
+	吐槽果子
+	种果子
+Tags
+Workout Git LeetCode C++ Iteration Obj-C BFS DP DFS 一陣風 Xcode 信息殘渣 Recursion 胡說有理 Java iOS 几滴雨 机械键盘
+Blogroll
+•	贾小壳
+•	EpsilonX’s Blog
+•	Coffee-Coder
+•	Lexi’s Leetcode solutions
+Recent Posts
+•	新老姿势交替时的阵痛
+•	辞旧迎新
+•	真实的重构
+Recent Comments
+•	hilda on Runner Stats
+•	Mandy Sin on Runner Stats
+•	Mr. Who on Runner Stats
+•	Mr. Who on Runner Stats
+Archive
+•	March 2015 (1)
+•	December 2014 (1)
+•	October 2014 (1)
+•	September 2014 (3)
+•	August 2014 (31)
+•	July 2014 (14)
+•	May 2014 (1)
+•	April 2014 (1)
+•	March 2014 (1)
+•	February 2014 (2)
+•	January 2014 (6)
+•	December 2013 (16)
+•	September 2013 (1)
+•	August 2013 (1)
+•	February 2013 (5)
+•	January 2013 (3)
+Who's Online
+1 visitors online now
+1 guests, 0 members
+Meta
+•	Log in
+•	Entries RSS
+•	Comments RSS
+•	WordPress.org
+
+2012-2014 © Mr. Who @ LifeXplorer
+Admired Theme
+
