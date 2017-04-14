@@ -1,0 +1,55 @@
+2017/4/17
+This is not true in every case. As a matter of fact, a built-in index already exists on every collection on the _id field. This index is unique and prevents duplicate insertions using the _id field in a collection.
+
+db.users.find({"name": "todd"}).explain("executionStats")
+
+coll.createIndex(new BasicDBObject("userid",1));
+
+Creating a Compound Index is not very different from creating a single index field. Using the fluent API provided by the BasicDBObject, you can append the keys and then create the index with that object:
+DBObject obj = new BasicDBObject();
+obj.put("userid", 1);
+obj.put("code", 1);
+coll.createIndex(obj);
+
+
+
+Once the index has been created, we will use the $text operator to perform a text search on the collection, using the string of words contained in the $search operator:
+MongoClient mongoClient = new MongoClient("localhost", 27017);
+
+DB db = mongoClient.getDB("sampledb");
+DBCollection coll = db.getCollection("textitems");
+coll.insert(new BasicDBObject("_id", 1).append("text", "mytext"));
+List<DBObject> list = coll.getIndexInfo();
+for (DBObject obj:list)
+  System.out.println(obj);
+}
+
+
+
+Searching for text by score
+A common requirement for a text search engine is to provide a score, for example, in the case of searches including a complex set of words. Score search can be done by setting thetextScore parameter in the $meta projection operator.
+Note
+The score represents the relevance of a document to a given text search query.
+The following example shows how to return the score in a search by means of the metadata associated with the query:
+DBObject scoreSearch = new BasicDBObject("score", new DBObject("$meta", "textScore"));
+
+DBObject doc = coll.findOne(textSearch, scoreSearch);
+
+System.out.println("Highest scoring document: "+ doc);
+
+
+First, let's see an example of OrderedBulkOperation:
+BulkWriteOperation builder = collection.initializeOrderedBulkOperation();
+
+builder.insert(new BasicDBObject("item", "A1"));
+builder.insert(new BasicDBObject("item", "A2"));
+builder.insert(new BasicDBObject("item", "A3"));
+
+builder.find(new BasicDBObject("item", "A1")).updateOne(new BasicDBObject("$set", new BasicDBObject("A1", "AX")));
+
+BulkWriteResult result = builder.execute();
+
+System.out.println("Bulk Completed: Inserted documents " + result.getInsertedCount());
+System.out.println("Bulk Completed: Modified documents " + result.getModifiedCount());
+
+BulkWriteOperation builder = coll.initializeUnorderedBulkOperation(); will be fastest
