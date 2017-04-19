@@ -1,0 +1,101 @@
+2017/4/19
+-----TDD----
+TDD is a simple procedure of writing tests before the actual implementation. It's an inversion of a traditional approach where testing is performed after the code is written.
+
+The procedure that drives this cycle is called red-green-refactor.
+
+Since a test is written before the actual implementation, it is supposed to fail. If it doesn't, the test is wrong.
+
+Being in the green state while writing tests is a sign of a false positive. Tests like these should be removed or refactored.
+ 	While writing tests, we are in the red state. When the implementation of a test is finished, all tests should pass and then we will be in the green state.
+If the last test failed, implementation is wrong and should be corrected.
+
+
+Write the code in any way you want, but do it fast. Once everything is green, we have conidence that there is a safety net in the form of tests. From this moment on, we can proceed to refactor the code. This means that we are making the code better and more optimum without introducing new features. While refactoring is in place, all tests should be passing all the time.
+
+If, while refactoring, one of the tests failed, refactor broke an existing functionality and, as before, changes should be reverted.
+
+Speed is the key
+Imagine a game of ping pong (or table tennis). The game is very fast; sometimes it is hard to even follow the ball when professionals play the game. TDD is very similar. TDD veterans tend not to spend more than a minute on either side of the table (test and implementation). Write a short test and run all tests (ping), write the implementation and run all tests (pong), write another test (ping), write implementation of that test (pong), refactor and conirm that all tests are passing (score), and then repeat—ping, pong, ping, pong, ping, pong, score, s Do not try to make the perfect code. Instead, try to keep the ball rolling until you think that the time is right to
+score (refactor).
+ 	Time between switching from tests to implementation (and vice versa) should be measured in minutes (if not seconds).
+
+
+This does not mean that tests resulting from TDD are useless—it is far from that. They are very useful and they allow us to develop with great speed without being afraid that something will be broken. This is especially true when refactoring takes place. Being able to reorganize the code while having the conidence that no functionality is broken is a huge boost to the quality.
+
+The main objective of test-driven development is testable code design with tests as a very useful side product.
+
+
+Black-box testing (also known as functional testing) treats software under test as a black-box without knowing its internals.
+
+Some of the advantages of black-box testing are as follows:
+·	Efficient for large segments of code
+·	Code access, understanding the code, and ability to code are not required
+·	Separation between user's and developer's perspectives
+
+Automated black-box testing relies on some form of automation such as behavior-driven development (BDD).
+
+
+software internals
+·	Blind coverage, since tester has limited knowledge about the application
+If tests are driving the development, they are often done in the form of acceptance criteria that is later used as a deinition of what should be developed.
+ 	Automated black-box testing relies on some form of automation such as behavior-driven development (BDD).
+
+The white-box testing
+White-box testing (also known as clear-box testing, glass-box testing, transparent-box testing, and structural testing) looks inside the software that is being tested and uses that knowledge as part of the testing process. If, for example, an exception should be thrown under certain conditions, a test might want to reproduce those conditions. White-box testing requires internal knowledge of the system and programming skills. It provides an internal perspective on the software under test.
+
+White-box testing is almost always automated and, in most cases, has the form of
+unit tests.	
+ 	When white-box testing is done before the implementation, it takes the form of TDD.
+
+If the network numbers are not the same, TCP/IP sends the packets to a router, a special machine able, by processes that do not concern us here, to find out where the
+
+Port numbers below 1024 can only be used by the superuser (root, under Unix); this prevents other users from running programs masquerading as standard services, but brings its own problems, as we shall see.
+
+----apache ----
+curl -v http://localhost/
+cat /etc/httpd/run/httpd.pid | xargs kill
+apachectl restart
+
+·	The server is configured to use the Unix utility inetd, which listens on all ports it is configured to handle. When a connection comes in, it determines from its configuration file, /etc/inetd.conf, which service that port corresponds to and runs the configured program
+
+Apache then uses the IP address, port number—and the Host header in HTTP/ 1.1—to decide which virtual host is the target of this request. The virtual host then looks at the path, which was handed to it in the request, and reads that against its configuration to decide on the appropriate response, which it then returns.
+
+
+---- algo ---
+* Given an array of non negative numbers and a total, is there subset of numbers in this array which adds up
+* to given total. Another variation is given an array is it possible to split it up into 2 equal
+* sum partitions. Partition need not be equal sized. Just equal sum.
+
+public class SubsetSum{
+
+public static void main(String[] args){
+	int[] ary=new int[]{1,2,4};
+	System.out.println(“--- result is:”+ isSubsetSum(ary,6));
+}
+
+private static bool isSubsetSum(int[] ary, int sum){
+bool[][] t=new bool[ary.length+1][sum+1];
+for(int i=0;i<=ary.length;i++){
+	for(int j=0;j<=sum;j++){
+			if(j==0)
+				t[i][j]=true;
+			
+			if(i>j){
+				// bigger than current sum, can’t count
+				t[i][j]=t[i-1][j];
+}
+else{
+	t[i][j]=t[i-1][j-i];
+}
+}
+}
+return t[ary.lenght][sum];
+}
+}
+
+--- English ---
+
+to enhance their software craftsmanship skills
+FAQ is netspeak for Frequently Asked Questions.
+
