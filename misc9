@@ -1,0 +1,226 @@
+2017/4/21
+
+-----------------java nio -------------
+
+-	Object-oriented program design is all about encapsulation. Encapsulation is a good thing: it partitions responsibility, hides implementation details, and promotes object reuse.
+
+-	But tremendous strides have been made in runtime optimization. Current JVMs run bytecode at speeds approaching that of natively compiled code, sometimes doing even better because of dynamic runtime optimizations. This means that most Java applications are no longer CPU bound (spending most of their time executing code) and are more frequently I/O bound (waiting for data transfers).
+
+-	The operating system wants to move data in large chunks (buffers), often with the assistance of hardware Direct Memory Access (DMA). The I/O classes of the JVM like to operate on small pieces — single bytes, or lines of text. This means that the operating system delivers buffers full of data that the stream classes of java.io spend a lot of time breaking down into little pieces, often copying each piece between several layers of objects.
+
+-	Additionally, a new Service Provider Interface (SPI) is provided in java.nio.channels.spi that allows you to plug in new types of channels and selectors without violating compliance with the specifications.
+
+-	1.4 introduce a new set of abstractions for doing I/O. Unlike previous packages, these are focused on shortening the distance between abstraction and reality. The NIO abstractions have very real and direct interactions with real-world entities.
+
+## Buffering
+-	Buffers, and how buffers are handled, are the basis of all I/O. The very term "input/output" means nothing more than moving data in and out of buffers.
+Processes perform I/O by requesting of the operating system that data be drained from a buffer (write) or that a buffer be filled with
+-	Figure 1-1 shows a simplified logical diagram of how block data moves from an external source, such as a disk, to a memory area inside a running process. The process requests that its buffer be filled by making the read( ) system call. This results in the kernel issuing a command to the disk controller hardware to fetch the data from disk. The disk controller writes the data directly into a kernel memory buffer by DMA without further assistance from the main CPU. Once the disk controller finishes filling the buffer, the kernel copies the data from the temporary buffer in kernel space to the buffer specified by the process when it requested the read( ) operation.
+-	Note the concepts of user space and kernel space in Figure 1-1. User space is where regular processes live. The JVM is a regular process and dwells in user space. User space is a nonprivileged area: code executing there cannot directly access hardware devices, for example. Kernel space is where the operating system lives. Kernel code has special privileges: it can communicate with device controllers, manipulate the state of processes in user space, etc. Most importantly, all I/O flows through kernel space, either directly (as decsribed here) or indirectly (see Section 1.4.2).
+-	When a process requests an I/O operation, it performs a system call, sometimes known as a trap, which transfers control into the kernel. The low-level open( ), read( ), write( ), and close( ) functions so familiar to C/C++ coders do nothing more than set up and perform the appropriate system calls. When the kernel is called in this way, it takes whatever steps are necessary to find the data the process is requesting and transfer it into the specified buffer in user space. The kernel tries to cache and/or prefetch data, so the data being requested by the process may already be available in kernel space. If so, the data requested by the process is copied out. If the data isn't available, the process is suspended while the kernel goes about bringing the data into memory.
+-	Looking at Figure 1-1, it's probably occurred to you that copying from kernel space to the final user buffer seems like extra work. Why not tell the disk controller to send it directly to the buffer in user space? There are a couple of problems with this. First, hardware is usually not able to access user space directly.2 Second, block-oriented hardware devices such as disk controllers operate on fixed-size data blocks. The user process may be requesting an oddly sized or misaligned chunk of data. The kernel plays the role of intermediary, breaking down and reassembling data as it moves between user space and storage devices.
+
+## Virtual Memory
+All modern operating systems make use of virtual memory. Virtual memory means that artificial, or virtual, addresses are used in place of physical (hardware RAM) memory addresses. This provides many advantages, which fall into two basic categories:
+1.	More than one virtual address can refer to the same physical memory location.
+2.	A virtual memory space can be larger than the actual hardware memory available.
+
+-	The previous section said that device controllers cannot do DMA directly into user space, but the same effect is achievable by exploiting item 1 above. By mapping a kernel space address to the same physical address as a virtual address in user space, the DMA hardware (which can access only physical memory addresses) can fill a buffer that is simultaneously visible to both the kernel and a user space process.
+-	This is great because `it eliminates copies between kernel and user space`, but requires the kernel and user buffers to share the same page alignment. Buffers must also be a multiple of the block size used by the disk controller (usually 512 byte disk sectors). Operating systems divide their memory address spaces into pages,
+Figure 1-5. Physical memory as a paging-area cache
+ 
+Aligning memory page sizes as multiples of the disk block size allows the kernel to issue direct commands to the disk controller hardware to write memory pages to disk or reload them when needed. It turns out that all disk I/O is done at the page level. This is the only way data ever moves between disk and physical memory in modern, paged operating systems.
+
+-	Modern CPUs contain a subsystem known as the Memory Management Unit (MMU). This device logically sits between the CPU and physical memory. It contains the mapping information needed to translate virtual addresses to physical memory addresses. When the CPU references a memory location, the MMU determines which page the location resides in (usually by shifting or masking the bits of the address value) and translates that virtual page number to a physical page number (this is done in hardware and is extremely fast). If there is no mapping currently in effect between that virtual page and a physical memory page, the MMU raises a page fault to the CPU.
+-	A page fault results in a trap, similar to a system call, which vectors control into the kernel along with information about which virtual address caused the fault. The kernel then takes steps to validate the page. The kernel will schedule a pagein operation to read the content of the missing page back into physical memory. This often results in another page being stolen to make room for the incoming page. In such a case, if the stolen page is dirty (changed since its creation or last pagein) a pageout must first be done to copy the stolen page content to the paging area on disk.
+-	A filesystem is a higher level of abstraction. Filesystems are a particular method of arranging and interpreting data stored on a disk (or some other random-access, block-oriented device).
+-	all I/O is done via demand paging. You'll recall that paging is very low level and always happens as direct transfers of disk sectors into and out of memory pages. So how does this low-level paging translate to file I/O, which can be performed in arbitrary sizes and alignments?
+-	When a request is made by a user process to read file data, the filesystem implementation determines exactly where on disk that data lives. It then takes action to bring those disk sectors into memory. In older operating systems, this usually meant issuing a command directly to the disk driver to read the needed disk sectors. But in modern, paged operating systems, the filesystem takes advantage of demand paging to bring data into memory.
+-	Filesystems also have a notion of pages, which may be the same size as a basic memory page or a multiple of it. Typical filesystem page sizes range from 2,048 to 8,192 bytes and will always be a multiple of the basic memory page size.
+### How a paged filesystem performs I/O boils down to the following:
+·	Determine which filesystem page(s) (group of disk sectors) the request spans. The file content and/or metadata on disk may be spread across multiple filesystem pages, and those pages may be noncontiguous.
+·	Allocate enough memory pages in kernel space to hold the identified filesystem pages.
+·	Establish mappings between those memory pages and the filesystem pages on disk.
+·	Generate page faults for each of those memory pages.
+·	The virtual memory system traps the page faults and schedules pageins to validate those pages by reading their contents from disk.
+·	Once the pageins have completed, the filesystem breaks down the raw data to extract the requested file content or attribute information.
+-	Most filesystems also prefetch extra filesystem pages on the assumption that the process will be reading the rest of the file. If there is not a lot of contention for memory, these filesystem pages could remain valid for quite some time. In which case, it may not be necessary to go to disk at all when the file is opened again later by the same, or a different, process. You may have noticed this effect when repeating a similar operation, such as a grep of several files. It seems to run much faster the second time around.
+
+
+## File locking
+-	File locking is a scheme by which one process can prevent others from accessing a file or restrict how other processes access that file. Locking is usually employed to control how updates are made to shared information or as part of transaction isolation. File locking is essential to controlling concurrent access to common resources by multiple entities. Sophisticated applications, such as databases, rely heavily on file locking. While the name "file locking" implies locking an entire file (and that is often done), locking is usually available at a finer-grained level. File regions are usually locked, with granularity down to the byte level. Locks are associated with a particular file, beginning at a specific byte location within that file and running for a specific range
+-	File locks come in two flavors: shared and exclusive.
+
+
+# Streams
+-	TTY (console) devices, printer ports, and network connections are common examples of streams.
+-	Streams are generally, but not necessarily, slower than block devices and are often the source of intermittent input. Most operating systems allow streams to be placed into nonblocking mode, which permits a process to check if input is available on the stream without getting stuck if none is available at the moment. Such a capability allows a process to handle input as it arrives but perform other functions while the input stream is idle.
+
+# Buffer
+-	A Buffer object is a container for a fixed amount of data. It acts as a holding tank, or staging area, where data can be stored and later retrieved. Buffers are filled and drained
+-	buffers have a strong bias toward bytes. Nonbyte buffers can perform translation to and from bytes behind the scenes, depending on how the buffer was created.
+-	Buffers work hand in glove with channels. Channels are portals through which I/O transfers take place, and buffers are the sources or targets of those data transfers. For outgoing transfers, data you want to send is placed in a buffer, which is passed to a channel. For inbound transfers, a channel deposits data in a buffer you provide.
+-	Conceptually, a buffer is an array of primitive data elements wrapped inside an object. The advantage of a Buffer class over a simple array is that it encapsulates data content and information about the data into a single object.
+## Attributes
+There are four attributes all buffers possess that provide information about the contained data elements. These are:
+### Capacity
+The maximum number of data elements the buffer can hold. The capacity is set when the buffer is created and can never be changed.
+### Limit
+The first element of the buffer that should not be read or written. In other words, the count of live elements in the buffer.
+### Position
+The index of the next element to be read or written. The position is updated automatically by relative get( ) and put( ) methods.
+### Mark
+A remembered position. Calling mark( ) sets mark = position. Calling reset( ) sets position = mark. The mark is undefined until set.
+
+0 <= mark <= position <= limit <= capacity
+
+Buffers are not thread-safe. If you want to access a given buffer concurrently from multiple threads, you'll need to do your own synchronization (e.g., acquiring a lock on the buffer object) prior to accessing the buffer.
+
+
+-----------  linux --------------
+output “top” to text file
+
+```sh
+top -n 1 -b > top.log
+
+-c : Command line/Program name toggle
+            Starts  top  with  the  last remembered 'c' state reversed.  Thus, if top was displaying command lines, now
+            that field will show program names, and visa versa.  See the 'c' interactive command for additional  infor-
+            mation.
+
+ps –wwaux   # -ww the double w means unlimited width
+```
+
+
+in Spring: 
+output:
+
+Bean constructor
+setBeanName (if BeanNameAware)
+setBeanFactory( if BeanFactoryAware)
+postConstruct
+afterPropertiesSet
+init-method
+BeanPostProcessors
+destroy(DisposableBean aware)
+destroy-method
+
+
+2017/4/20
+How to generate MD5 finger print in Windows
+
+C:\Windows\System32>certutil.exe -hashfile C:\Users\43888859\Projects\Own\HSS_Custody\SZT\Bsmr.rar MD5
+MD5 hash of file C:\Users\43888859\Projects\Own\HSS_Custody\SZT\Bsmr.rar:
+5e 0f 9e 2f f3 43 60 e1 45 96 e3 24 22 66 4d 6a
+CertUtil: -hashfile command completed successfully.
+
+
+
+2017/4/19
+-----TDD----
+TDD is a simple procedure of writing tests before the actual implementation. It's an inversion of a traditional approach where testing is performed after the code is written.
+
+The procedure that drives this cycle is called red-green-refactor.
+
+Since a test is written before the actual implementation, it is supposed to fail. If it doesn't, the test is wrong.
+
+Being in the green state while writing tests is a sign of a false positive. Tests like these should be removed or refactored.
+	While writing tests, we are in the red state. When the implementation of a test is finished, all tests should pass and then we will be in the green state.
+If the last test failed, implementation is wrong and should be corrected.
+
+
+Write the code in any way you want, but do it fast. Once everything is green, we have conidence that there is a safety net in the form of tests. From this moment on, we can proceed to refactor the code. This means that we are making the code better and more optimum without introducing new features. While refactoring is in place, all tests should be passing all the time.
+
+If, while refactoring, one of the tests failed, refactor broke an existing functionality and, as before, changes should be reverted.
+
+Speed is the key
+Imagine a game of ping pong (or table tennis). The game is very fast; sometimes it is hard to even follow the ball when professionals play the game. TDD is very similar. TDD veterans tend not to spend more than a minute on either side of the table (test and implementation). Write a short test and run all tests (ping), write the implementation and run all tests (pong), write another test (ping), write implementation of that test (pong), refactor and conirm that all tests are passing (score), and then repeat—ping, pong, ping, pong, ping, pong, score, s Do not try to make the perfect code. Instead, try to keep the ball rolling until you think that the time is right to
+score (refactor).
+	Time between switching from tests to implementation (and vice versa) should be measured in minutes (if not seconds).
+
+
+This does not mean that tests resulting from TDD are useless—it is far from that. They are very useful and they allow us to develop with great speed without being afraid that something will be broken. This is especially true when refactoring takes place. Being able to reorganize the code while having the conidence that no functionality is broken is a huge boost to the quality.
+
+The main objective of test-driven development is testable code design with tests as a very useful side product.
+
+
+Black-box testing (also known as functional testing) treats software under test as a black-box without knowing its internals.
+
+Some of the advantages of black-box testing are as follows:
+·	Efficient for large segments of code
+·	Code access, understanding the code, and ability to code are not required
+·	Separation between user's and developer's perspectives
+
+Automated black-box testing relies on some form of automation such as behavior-driven development (BDD).
+
+
+software internals
+·	Blind coverage, since tester has limited knowledge about the application
+If tests are driving the development, they are often done in the form of acceptance criteria that is later used as a deinition of what should be developed.
+	Automated black-box testing relies on some form of automation such as behavior-driven development (BDD).
+
+The white-box testing
+White-box testing (also known as clear-box testing, glass-box testing, transparent-box testing, and structural testing) looks inside the software that is being tested and uses that knowledge as part of the testing process. If, for example, an exception should be thrown under certain conditions, a test might want to reproduce those conditions. White-box testing requires internal knowledge of the system and programming skills. It provides an internal perspective on the software under test.
+
+White-box testing is almost always automated and, in most cases, has the form of
+unit tests.	
+	When white-box testing is done before the implementation, it takes the form of TDD.
+
+If the network numbers are not the same, TCP/IP sends the packets to a router, a special machine able, by processes that do not concern us here, to find out where the
+
+Port numbers below 1024 can only be used by the superuser (root, under Unix); this prevents other users from running programs masquerading as standard services, but brings its own problems, as we shall see.
+
+----apache ----
+curl -v http://localhost/
+cat /etc/httpd/run/httpd.pid | xargs kill
+apachectl restart
+
+·	The server is configured to use the Unix utility inetd, which listens on all ports it is configured to handle. When a connection comes in, it determines from its configuration file, /etc/inetd.conf, which service that port corresponds to and runs the configured program
+
+Apache then uses the IP address, port number—and the Host header in HTTP/ 1.1—to decide which virtual host is the target of this request. The virtual host then looks at the path, which was handed to it in the request, and reads that against its configuration to decide on the appropriate response, which it then returns.
+
+
+---- algo ---
+* Given an array of non negative numbers and a total, is there subset of numbers in this array which adds up
+* to given total. Another variation is given an array is it possible to split it up into 2 equal
+* sum partitions. Partition need not be equal sized. Just equal sum.
+
+public class SubsetSum{
+
+public static void main(String[] args){
+	int[] ary=new int[]{1,2,4};
+	System.out.println(“--- result is:”+ isSubsetSum(ary,6));
+}
+
+private static bool isSubsetSum(int[] ary, int sum){
+bool[][] t=new bool[ary.length+1][sum+1];
+for(int i=0;i<=ary.length;i++){
+	for(int j=0;j<=sum;j++){
+			if(j==0)
+				t[i][j]=true;
+			
+			if(i>j){
+				// bigger than current sum, can’t count
+				t[i][j]=t[i-1][j];
+}
+else{
+	t[i][j]=t[i-1][j-i];
+}
+}
+}
+return t[ary.lenght][sum];
+}
+}
+
+--- English ---
+
+to enhance their software craftsmanship skills
+FAQ is netspeak for Frequently Asked Questions.
+
+2017/4/18
+------------ Rabit MQ ---------
+Derek Collison, one of the originators of modern messaging technology, memorably described messaging as enabling “data in motion.”
+
+
+
+Simple Logging Facade for Java (SLF4J)
