@@ -1,0 +1,43 @@
+
+-------------- TDD ---------
+Developers shouldn't rely on system documentation because it is almost never up to date. Besides, no documentation can provide as detailed and up-to-date description of the code as the code itself.
+
+Using code as documentation, does not exclude other types of documents. The key is to avoid duplication. If details of the system can be obtained by reading the code, other types of documentation can provide quick guidelines and a high-level overview. Non-code documentation should answer questions such as what the general purpose of the system is and what technologies are used by the system. In many cases, a simple README is enough to provide the quick start that developers need. Sections such as project description, environment setup, installation, and build and packaging instructions are very helpful for newcomers. From there on, code is the bible.
+
+Tests are executable documentation with TDD being the most common way to create and maintain it.
+
+If documentation needs to be decoupled from the code, unit tests are not a good match. That is one of the reasons why BDD came in to being.
+	BDD can provide documentation necessary for non-coders, while still maintaining the advantages of TDD and automation.
+
+Customers need to be able to define new functionality of the system, as well as to be able to get information about all the important aspects of the current system. That documentation should not be too technical (code is not an option), but it still must be always up to date. BDD narratives and scenarios are one of the best ways to provide this type of documentation. Ability to act as acceptance criteria (written before the code), be executed frequently (preferably on every commit), and be written in natural language makes BDD stories not only always up to date, but usable by those who do not want to inspect the code.
+
+The only cost-effective way to have accurate and up-to-date information is to have executable documentation that can be integrated into your continuous integration system.
+
+TDD as a methodology is a good way to move towards this direction. On a low level, unit tests are a best it. On the other hand, BDD provides a good way to work on a functional level while maintaining understanding accomplished using natural language.
+
+
+# No debugging
+We (authors of this book) almost never debug applications we're working on!
+This statement might sound pompous, but it's true. We almost never debug because there is rarely a reason to debug an application. When tests are written before the code and the code coverage is high, we can have high confidence that the application works as expected. This does not mean that applications written using TDD do not have bugs—they do. All applications do. However, when that happens, it is easy to isolate them by simply looking for the code that is not covered with tests.
+
+
+A test is a repeatable process or method that verifies the correct behavior of a tested target in a determined situation with a determined input expecting a predefined output or interactions.
+
+The @BeforeClass annotation specifies a method that will be run once before any of the test methods in the class. It is a useful way to do some general setup that will be used by most (if not all) tests.
+The @Before annotation specifies a method that will be run before each test method. We can use it to set up test data without worrying that the tests that are run afterwards will change the state of that data.
+
+
+Assert.assertTrue(friendships.getFriendsList("Joe")
+.containsAll(friendsOfJoe));
+}
+ 
+Chapter 2
+The only notable difference when compared with Junit is the order of the assert variables. While JUnit assert's order of arguments is optional message, expected values, and actual values, TestNG's order is actual value, expected value and optional message. Besides the difference in the order of arguments we're passing to the assert methods, there are almost no differences between JUnit and TestNG.
+
+You might have noticed that @Test is missing. TestNG allows us to set it on the class level and thus convert all public methods into tests.k 
+
+As a result, tests are more concise and easier to understand.
+
+# Hamcrest
+Hamcrest adds a lot of methods called matchers. Each matcher is designed to perform a comparison operation. It is extensible enough to support custom matchers created by yourself. Furthermore, JUnit supports Hamcrest natively since its core is included in the JUnit distribution. You can start using Hamcrest effortlessly.
+testCompile 'org.hamcrest:hamcrest-all:1.3'
