@@ -1,0 +1,373 @@
+2017/4/28
+
+------------  java 8 --------
+The name flatMap comes from sets. Suppose you have a “many-valued” function—a function computing a set of possible answers. And then you have another such function. How can you compose these functions? If f(x) is the set {y1,..., yn}, you apply g to each element, yielding {g(y1),..., g(yn)}. But each of the g(yi) is a set. You want to “flatten” the set of sets so that you get the set of all possible values of both functions.
+There is a flatMap for Optional<T> as well. Given a function T -> Optional<U>, flatMap unwraps the value in the Optional and ap
+the new Date and Time API solves these issues.
+The key points of this chapter are:
+• All java.time objects are immutable.
+• An Instant is a point on the time line (similar to a Date).
+• In Java time, each day has exactly 86,400 seconds (i.e., no leap seconds).
+• A Duration is the difference between two instants.
+• LocalDateTime has no time zone information.
+• TemporalAdjuster methods handle common calendar computations, such as finding the first Tuesday of a month.
+ZonedDateTime is a point in time in a given time zone (similar to GregorianCalendar).
+• Use a Period, not a Duration, when advancing zoned time, in order to account for daylight savings time changes.
+• Use DateTimeFormatter to format and parse dates and times.
+
+The Instant values go back as far as a billion years (Instant.MIN).
+The static method call Instant.now() gives the current instant. You can compare two instants with the equals and compareTo methods in the usual way, so you can use instants as timestamps.
+To find out the difference between two instants, use the static method Duration.between. For example, here is how you can measure the running time of an algorithm:
+Click here to view code image
+Instant start = Instant.now();
+runAlgorithm();
+Instant end = Instant.now();
+Duration timeElapsed = Duration.between(start, end);
+long millis = timeElapsed.toMillis();
+A Duration is the amount of time between two instants. You can get the length of a Duration in conventional units by calling toNanos, toMillis,toSeconds, toMinutes, toHours, or toDays.
+
+
+Durations require more than a long value for their internal storage. The number of seconds is stored in a long, and the number of nanoseconds in an additional int. If you want to make computations in nanosecond accuracy, and you actually need the entire range of a Duration, then you can use one of the methods in Table 5–1. Otherwise, you can just call toNanos and do your calculations with long values.
+
+
+
+It takes almost 300 years of nanoseconds to overflow a long.
+
+
+For example, if you want to check whether an algorithm is at least ten times faster than another, you can compute
+Click here to view code image
+Duration timeElapsed2 = Duration.between(start2, end2);
+boolean overTenTimesFaster =
+   timeElapsed.multipliedBy(10).minus(timeElapsed2).isNegative();
+   // Or timeElapsed.toNanos() * 10 < timeElapsed2.toNanos()
+
+
+
+# Local Dates
+Now let us turn from absolute time to human time. There are two kinds of human time in the new Java API, local date/time and zoned time. Local date/time has a date and/or time of day, but no associated time zone information. A local date is, for example, June 14, 1903 (the day on which Alonzo Church, inventor of the lambda calculus, was born). Since that date has neither a time of day nor time zone information, it does not correspond to a precise instant of time. In contrast, July 16, 1969, 09:32:00 EDT (the launch of Apollo 11) is a zoned date/time, representing a precise instant on the time line.
+
+For that reason, the API designers recommend that you do not use zoned time unless you really want to represent absolute time instances. Birthdays, holidays, schedule times, and so on are usually best represented as local dates or times.
+A LocalDate is a date, with a year, month, and day of the month. To construct one, you can use the now or of static methods:
+Click here to view code image
+LocalDate today = LocalDate.now(); // Today's date
+LocalDate alonzosBirthday = LocalDate.of(1903, 6, 14);
+alonzosBirthday = LocalDate.of(1903, Month.JUNE, 14);
+   // Uses the Month enumeration
+
+LocalDate programmersDay = LocalDate.of(2014, 1, 1).plusDays(255);
+   // September 13, but in a leap year it would be September 12
+Recall that the difference between two time instants is a Duration. The equivalent for local dates is a Period, which expresses a number of elapsed years, months, or days. You can call birthday.plus(Period.ofYears(1)), to get the birthday next year. Of course, you can also just call birthday.plusYears(1). Butbirthday.plus(Duration.ofDays(365)) won’t produce the correct result in a leap year.
+
+The until method yields the difference between two local dates. For example,
+Click here to view code image
+independenceDay.until(christmas)
+yields a period of 5 months and 21 days. That is actually not terribly useful because the number of days per month varies. To find the number of days, use
+Click here to view code image
+independenceDay.until(christmas, ChronoUnit.DAYS) // 174 days
+
+Some methods in Table 5–2 could potentially create nonexistent dates. For example, adding one month to January 31 should not yield February 31. Instead of throwing an exception, these methods return the last valid day of the month. For example,
+Click here to view code image
+LocalDate.of(2016, 1, 31).plusMonths(1)
+and
+Click here to view code image
+LocalDate.of(2016, 3, 31).minusMonths(1)
+yield February 29, 2016.
+
+The getDayOfWeek yields the weekday, as a value of the DayOfWeek enumeration. DayOfWeek.MONDAY has the numerical value 1, andDayOfWeek.SUNDAY has the value 7. For example,
+Click here to view code image
+LocalDate.of(1900, 1, 1).getDayOfWeek().getValue()
+yields 1. The DayOfWeek enumeration has convenience methods plus and minus to compute weekdays modulo 7. For example,DayOfWeek.SATURDAY.plus(3) yields DayOfWeek.TUESDAY.
+
+The weekend days actually come at the end of the week. This is different from java.util.Calendar, where Sunday has value 1 and Saturday value 7.
+________________________________________
+In addition to LocalDate, there are also classes MonthDay, YearMonth, and Year to describe partial dates.
+
+Date Adjusters
+For scheduling applications, you often need to compute dates such as “the first Tuesday of every month.” The TemporalAdjusters class provides a number of static methods for common adjustments. You pass the result of an adjustment method to the with method. For example, the first Tuesday of a month can be computed like this:
+LocalDate firstTuesday = LocalDate.of(year, month, 1).with(
+   TemporalAdjusters.nextOrSame(DayOfWeek.TUESDAY));
+As always, the with method returns a new LocalDate object without modifying the original. Table 5–3 shows the available adjusters.
+
+
+You can also roll your own adjuster by implementing the TemporalAdjuster interface. Here is an adjuster for computing the next weekday.
+Click here to view code image
+TemporalAdjuster NEXT_WORKDAY = w -> {
+   LocalDate result = (LocalDate) w;
+   do {
+      result = result.plusDays(1);
+   } while (result.getDayOfWeek().getValue() >= 6);
+   return result;
+};
+
+LocalDate backToWork = today.with(NEXT_WORKDAY);
+
+Note that the parameter of the lambda expression has type Temporal, and it must be cast to LocalDate. You can avoid this cast with the ofDateAdjustermethod that expects a lambda of type UnaryOperator<LocalDate>.
+Click here to view code image
+TemporalAdjuster NEXT_WORKDAY = TemporalAdjusters.ofDateAdjuster(w -> {
+   LocalDate result = w; // No cast
+   do {
+      result = result.plusDays(1);
+   } while (result.getDayOfWeek().getValue() >= 6);
+   return result;
+});
+# Local Time
+A LocalTime represents a time of day, such as 15:30:00. You can create an instance with the now or of methods:
+
+LocalTime rightNow = LocalTime.now();
+LocalTime bedtime = LocalTime.of(22, 30); // or LocalTime.of(22, 30, 0)
+Table 5–4 shows common operations with local times. The plus and minus operations wrap around a 24-hour day. For example,
+Click here to view code image
+LocalTime wakeup = bedtime.plusHours(8); // wakeup is 6:30:00
+
+There is a LocalDateTime class, representing a date and time. That class is suitable for storing points in time in a fixed time zone, for example, for a schedule of classes or events. However, if you need to make calculations that span the daylight savings time, or if you need to deal with users in different time zones, you should use theZonedDateTime class that we discuss next.
+Given a time zone ID, the static method ZoneId.of(id) yields a ZoneId object. You can use that object to turn a LocalDateTime object into aZonedDateTime object by calling local.atZone(zoneId), or you can construct a ZonedDateTime by calling the static methodZonedDateTime.of(year, month, day, hour, minute, second, nano, zoneId). For example,
+Click here to view code image
+ZonedDateTime apollo11launch  = ZonedDateTime.of(1969, 7, 16, 9, 32, 0, 0,
+   ZoneId.of("America/New_York"));
+   // 1969-07-16T09:32-04:00[America/New_York]
+This is a specific instant in time. Call apollo11launch.toInstant to get the Instant. Conversely, if you have an instant in time, callinstant.atZone(ZoneId.of("UTC")) to get the ZonedDateTime at the Greenwich Royal Observatory, or use another ZoneId to get it elsewhere on the planet.
+UTC stands for “coordinated universal time,” and the acronym is a compromise between the aforementioned English and the French “temps universel coordiné,” having the distinction of being incorrect in either language. UTC is the time at the Greenwich Royal Observatory, without daylight savings time.
+If you try to construct nonexistent time March 31 2:30, you actually get 3:30.
+Click here to view code image
+ZonedDateTime skipped = ZonedDateTime.of(
+   LocalDate.of(2013, 3, 31),
+   LocalTime.of(2, 30),
+   ZoneId.of("Europe/Berlin"));
+   // Constructs March 31 3:30
+You also need to pay attention when adjusting a date across daylight savings time boundaries. For example, if you set a meeting for next week, don’t add a duration of seven days:
+Click here to view code image
+ZonedDateTime nextMeeting = meeting.plus(Duration.ofDays(7));
+   // Caution! Won't work with daylight savings time
+Instead, use the Period class.
+ZonedDateTime nextMeeting = meeting.plus(Period.ofDays(7)); // OK
+The static methods ofLocalizedDate, ofLocalizedTime, and ofLocalizedDateTime create such a formatter. For example:
+Click here to view code image
+DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG);
+String formatted = formatter.format(apollo11launch);
+   // July 16, 1969 9:32:00 AM EDT
+These methods use the default locale. To change to a different locale, simply use the withLocale method.
+
+# Interoperating with Legacy Code
+As a brand-new creation, the Java Date and Time API will have to interoperate with existing classes, in particular, the ubiquitous java.util.Date,java.util.GregorianCalendar, and java.sql.Date/Time/Timestamp.
+The Instant class is a close analog to java.util.Date. In Java 8, that class has two added methods: the toInstant method that converts
+
+a Date to anInstant, and the static from method that converts in the other direction.
+Similarly, ZonedDateTime is a close analog to java.util.GregorianCalendar, and that class has gained conversion methods in Java 8. ThetoZonedDateTime method converts a GregorianCalendar to a ZonedDateTime, and the static from method does the opposite conversion.
+Another set of conversions is available for the date and time classes in the java.sql package. You can also pass a DateTimeFormatter to legacy code that usesjava.text.Format. Table 5–9 summarizes these conversions.
+
+
+In Java 8, you don’t have to write the loop boilerplate any more. Instead, you provide a lambda expression for updating the variable, and the update is done for you. In our example, we can call
+Click here to view code image
+largest.updateAndGet(x -> Math.max(x, observed));
+or
+Click here to view code image
+largest.accumulateAndGet(observed, Math::max);
+The accumulateAndGet method takes a binary operator that is used to combine the atomic value and the supplied argument.
+
+There are also methods getAndUpdate and getAndAccumulate that return the old value.
+When you have a very large number of threads accessing the same atomic values, performance suffers because the optimistic updates require too many retries. Java 8 provides classes LongAdder and LongAccumulator to solve this problem. A LongAdder is composed of multiple variables whose collective sum is the current value. Multiple threads can update different summands, and new summands are automatically provided when the number of threads increases.
+
+If you anticipate high contention, you should simply use a LongAdder instead of an AtomicLong. The method names are slightly different. Call increment to increment a counter or add to add a quantity, and sum to retrieve the total.
+Click here to view code image
+final LongAdder adder = new LongAdder();
+for (...)
+   pool.submit(() -> {
+      while (...) {
+         ...
+         if (...) adder.increment();
+ }
+   });
+...
+long total = adder.sum());
+
+The LongAccumulator generalizes this idea to an arbitrary accumulation operation. In the constructor, you provide the operation, as well as its neutral element. To incorporate new values, call accumulate.
+
+
+
+Call get to obtain the current value. The following has the same effect as a LongAdder:
+Click here to view code image
+LongAccumulator adder = new LongAccumulator(Long::sum, 0);
+// In some thread...
+adder.accumulate(value);
+If you choose a different operation, you can compute maximum or minimum (see Exercise 4). In general, the operation must be associative and commutative. That means that the final result must be independent of the order in which the intermediate values were combined.
+There are also DoubleAdder and DoubleAccumulator that work in the same way, except with double values.
+
+
+
+Another addition to Java 8 is the StampedLock class that can be used to implement optimistic reads. I don’t recommend that application
+
+programmers use locks, but here is how it is done. You first call tryOptimisticRead, upon which you get a “stamp.” Read your values and check whether the stamp is still valid (i.e., no other thread has obtained a write lock). If so, you can use the values. If not, get a read lock (which blocks any writers). Here is an example.
+Click here to view code image
+public class Vector {
+   private int size;
+   private Object[] elements;
+   private StampedLock lock = new StampedLock();
+
+   public Object get(int n) {
+      long stamp = lock.tryOptimisticRead();
+      Object[] currentElements = elements;
+
+int currentSize = size;
+      if (!lock.validate(stamp)) { // Someone else had a write lock
+         stamp = lock.readLock(); // Get a pessimistic lock
+         currentElements = elements;
+         currentSize = size;
+         lock.unlockRead(stamp);
+      }
+      return n < currentSize ? currentElements[n] : null;
+   }
+   ...
+}
+Some applications use humongous concurrent hash maps, so large that the size method is insufficient because it returns an int. What is one to do with a map that has over two billion entries? Java 8 introduces a mappingCount method that returns the size as a long.
+As of Java 8, the concurrent hash map organizes the buckets as trees, not lists, when the key type implements Comparable, guaranteeing O(log(n)) performance.
+If multiple threads modify a plain HashMap, they can destroy the internal structure (an array of linked lists). Some of the links may go missing, or even go in circles, rendering the data structure unusable. That will never happen with a ConcurrentHashMap. In the example above, the code for get and put will never corrupt the data structure. But, since the sequence of operations is not atomic, the result is not predictable.
+Alternatively, you can use a ConcurrentHashMap<String, AtomicLong> or, with Java 8, a ConcurrentHashMap<String, LongAdder>. Then the update code is:
+Click here to view code image
+map.putIfAbsent(word, new LongAdder());
+map.get(word).increment();
+The first statement ensures that there is a LongAdder present that we can increment atomically.
+Java 8 provides methods that make atomic updates more convenient. The compute method is called with a key and a function to compute the new value. That function receives the key and the associated value, or null if there is none, and it computes the new value. For example, here is how we can update a map of integer counters:
+Click here to view code image
+map.compute(word, (k, v) -> v == null ? 1 : v + 1);
+You cannot have null values in a ConcurrentHashMap. There are many methods that use a null value as an indication that a given key is not present in the map.
+________________________________________
+There are also variants computeIfPresent and computeIfAbsent that only compute a new value when there is already an old one, or when there isn’t yet one. A map of LongAdder counters can be updated with
+Click here to view code image
+map.computeIfAbsent(word, k -> new LongAdder()).increment();
+That is almost like the call to putIfAbsent that you saw before, but the LongAdder constructor is only called when a new counter is actually needed.
+You often need to do something special when a key is added for the first time. The merge method makes this particularly convenient. It has a parameter for the initial value that is used when the key is not yet present. Otherwise, the function that you supplied is called, combining the existing value and the initial value. (Unlike compute, the function does not process the key.)
+Click here to view code image
+map.merge(word, 1L, (existingValue, newValue) -> existingValue + newValue);
+or, more simply,
+map.merge(word, 1L, Long::sum);
+It doesn’t get more concise than that. See Exercise 5 for another compelling application of the merge method.
+
+When you use compute or merge, keep in mind that the function that you supply should not do a lot of work. While that function runs, some other updates to the map may be blocked. Of course, that function should also not update other parts of the map.
+
+
+## Bulk Operations
+Java 8 provides bulk operations on concurrent hash maps that can safely execute even while other threads operate on the map. The bulk operations traverse the map and operate on the elements they find as they go along. No effort is made to freeze a snapshot of the map in time. Unless you happen to know that the map is not being modified while a bulk operation runs, you should treat its result as an approximation of the map’s state.
+There are three kinds of operations:
+• search applies a function to each key and/or value, until the function yields a non-null result. Then the search terminates and the function’s result is returned.
+reduce combines all keys and/or values, using a provided accumulation function.
+• forEach applies a function to all keys and/or values.
+Each operation has four versions:
+• searchKeys/reduceKeys/forEachKey: operates on keys.
+• searchValues/reduceValues/forEachValue: operates on values.
+• search/reduce/forEach: operates on keys and values.
+• searchEntries/reduceEntries/forEachEntry: operates on Map.Entry objects.
+With each of the operations, you need to specify a parallelism threshold. If the map contains more elements than the threshold, the bulk operation is parallelized. If you want the bulk operation to run in a single thread, use a threshold of Long.MAX_VALUE. If you want the maximum number of threads to be made available for the bulk operation, use a threshold of 1.
+Let’s look at the search methods first.
+
+For example, suppose we want to find the first word that occurs more than 1,000 times. We need to search keys and values:
+Click here to view code image
+String result = map.search(threshold, (k, v) -> v > 1000 ? k : null);
+Then result is set to the first match, or to null if the search function returns null for all inputs.
+The forEach methods have two variants. The first one simply applies a consumer function for each map entry, for example
+Click here to view code image
+map.forEach(threshold,
+   (k, v) -> System.out.println(k + " -> " + v));
+The second variant takes an additional transformer function, which is applied first, and its result is passed to the consumer:
+Click here to view code image
+map.forEach(threshold,
+   (k, v) -> k + " -> " + v, // Transformer
+   System.out::println); // Consumer
+The transformer can be used as a filter. Whenever the transformer returns null, the value is silently skipped. For example, here we only print the entries with large values:
+Click here to view code image
+map.forEach(threshold,
+   (k, v) -> v > 1000 ? k + " -> " + v : null, // Filter and transformer
+   System.out::println); // The nulls are not passed to the consumer
+The reduce operations combine their inputs with an accumulation function. For example, here is how you can compute the sum of all values.
+Click here to view code image
+Long sum = map.reduceValues(threshold, Long::sum);
+As with forEach, you can also supply a transformer function. Here we compute the length of the longest key:
+Click here to view code image
+Integer maxlength = map.reduceKeys(threshold,
+   String::length, // Transformer
+   Integer::max); // Accumulator
+a primitive value and specify a default value and an accumulator function. The default value is returned when the map is empty.
+Click here to view code image
+long sum = map.reduceValuesToLong(threshold,
+   Long::longValue, // Transformer to primitive type
+   0, // Default value for empty map
+   Long::sum); // Primitive type accumulator
+
+
+
+
+
+## java.util.Date vs java.sql.Date
+
+Basically databases usually support at least three forms of datetime fields which are date, time and timestamp. Each of these have a corresponding class in JDBC and each of them extend java.util.Date. Quick semantics of each of these three are the following:
+
+java.sql.Date corresponds to SQL DATE which means it stores years, months and days while hour, minute, second and millisecond are ignored. Additionally sql.Date isn't tied to timezones.
+java.sql.Time corresponds to SQL TIME and as should be obvious, only contains information about hour, minutes, seconds and milliseconds.
+java.sql.Timestamp corresponds to SQL TIMESTAMP which is exact date to the nanosecond (note that util.Date only supports milliseconds!) with customizable precision.
+One of the most common bugs when using JDBC drivers in relation to these three types is that the types are handled incorrectly. This means that sql.Date is timezone specific, sql.Time contains current year, month and day et cetera et cetera.
+
+Finally: Which one to use?
+
+Depends on the SQL type of the field, really. PreparedStatement has setters for all three values, #setDate() being the one for sql.Date, #setTime() for sql.Time and #setTimestamp() for sql.Timestamp.
+
+Do note that if you use ps.setObject(fieldIndex, utilDateObject); you can actually give a normal util.Date to most JDBC drivers which will happily devour it as if it was of the correct type but when you request the data afterwards, you may notice that you're actually missing stuff.
+
+I'm really saying that none of the Dates should be used at all.
+
+What I am saying that save the milliseconds/nanoseconds as plain longs and convert them to whatever objects you are using (obligatory joda-time plug). One hacky way which can be done is to store the date component as one long and time component as another, for example right now would be 20100221 and 154536123. These magic numbers can be used in SQL queries and will be portable from database to another and will let you avoid this part of JDBC/Java Date API:s entirely.
+
+
+2017/4/26, 27
+
+------- java 8 ------------
+http://www.journaldev.com/8697/javase8-interview-questions-part1
+
+Optional<String> startsWithQ
+   = words.filter(s -> s.startsWith("Q")).findFirst();
+If you are okay with any match, not just the first one, then use the findAny method. This is effective when you parallelize the stream since the first match in any of the examined segments will complete the computation.
+Click here to view code image
+Optional<String> startsWithQ
+   = words.parallel().filter(s -> s.startsWith("Q")).findAny();
+
+If you just want to know there is a match, use anyMatch. That method takes a predicate argument, so you won’t need to use filter.
+boolean aWordStartsWithQ
+   = words.parallel().anyMatch(s -> s.startsWith("Q"));
+There are also methods allMatch and noneMatch that return true if all or no elements match a predicate. These methods always examine the entire stream, but they still benefit from being run in parallel.
+
+
+Oracle to check DB character set
+select userenv('language') from dual;
+
+The key to using Optional effectively is to use a method that either consumes the correct value or produces an alternative.
+Besides the isPresent method, there is an ifPresent method that accepts a function. If the optional value exists, it is passed to that function. Otherwise, nothing happens. Instead of using an if statement, you call
+Click here to view code image
+optionalValue.ifPresent(v -> Process v);
+For example, if you want to add the value to a set if it is present, call
+Click here to view code image
+optionalValue.ifPresent(v -> results.add(v));
+or simply 
+optionalValue.ifPresent(results::add);
+When calling this version of ifPresent, no value is returned. If you want to process the result, use map instead:
+Click here to view code image
+Optional<Boolean> added = optionalValue.map(results::add);
+Now added has one of three values: true or false wrapped into an Optional, if optionalValue was present, or an empty optional otherwise.
+
+String result = optionalString.orElse("");
+   // The wrapped string, or "" if none
+You can also invoke code to compute the default,
+Click here to view code image
+String result = optionalString.orElseGet(() -> System.getProperty("user.dir"));
+   // The function is only called when needed
+Or, if you want to throw another exception if there is no value,
+Click here to view code image
+String result = optionalString.orElseThrow(NoSuchElementException::new);
+   // Supply a method that yields an exception object
+
+
+If you write a method that creates an Optional object, there are several static methods for that purpose. Either create an Optional.of(result) or Optional.empty(). For example,
+Click here to view code image
+public static Optional<Double> inverse(Double x) {
+   return x == 0 ? Optional.empty() : Optional.of(1 / x);
+}
+
+https://iress.wd3.myworkdayjobs.com/IRESS_EXTERNAL/job/Sydney---Martin-Place/Backend-Software-Engineer_V-00951
+
