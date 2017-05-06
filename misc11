@@ -4,6 +4,8 @@ If a client can reasonably be expected to recover from an exception, make it a c
 
 
 
+In Java exceptions under Error and RuntimeException classes are unchecked exceptions, everything else under throwable is checked.
+
 2017/4/28
 
 ------------  java 8 --------
