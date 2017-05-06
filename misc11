@@ -1,3 +1,9 @@
+Should we make our exceptions checked or unchecked?
+Following is the bottom line from Java documents
+If a client can reasonably be expected to recover from an exception, make it a checked exception. If a client cannot do anything to recover from the exception, make it an unchecked exception
+
+
+
 2017/4/28
 
 ------------  java 8 --------
