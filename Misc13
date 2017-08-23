@@ -1,0 +1,210 @@
+
+--- bootstrap ----
+Strikethrough text
+For indicating blocks of text that are no longer relevant use the <s> tag.
+
+Deleted text
+For indicating blocks of text that have been deleted use the <del> tag.
+
+
+Marked text
+For highlighting a run of text due to its relevance in another context, use the <mark> tag.
+
+Lead body copy
+Make a paragraph stand out by adding .lead.
+
+<p class="text-left">Left aligned text.</p>
+<p class="text-center">Center aligned text.</p>
+<p class="text-right">Right aligned text.</p>
+<p class="text-justify">Justified text.</p>
+<p class="text-nowrap">No wrap text.</p>
+
+<p class="text-lowercase">Lowercased text.</p>
+<p class="text-uppercase">Uppercased text.</p>
+<p class="text-capitalize">Capitalized text.</p>
+
+Basic abbreviation
+An abbreviation of the word attribute is attr.
+<abbr title="attribute">attr</abbr>
+Initialism
+Add .initialism to an abbreviation for a slightly smaller font-size.
+
+HTML is the best thing since sliced bread.
+<abbr title="HyperText Markup Language" class="initialism">HTML</abbr>
+
+<blockquote>
+  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+  <footer>Someone famous in <cite title="Source Title">Source Title</cite></footer>
+</blockquote>
+
+
+User input
+Use the <kbd> to indicate input that is typically entered via keyboard.
+
+
+Contextual classes
+Use contextual classes to color table rows or individual cells.
+
+Class	Description
+.active	Applies the hover color to a particular row or cell
+.success	Indicates a successful or positive action
+.info	Indicates a neutral informative change or action
+.warning	Indicates a warning that might need attention
+.danger	Indicates a dangerous or potentially negative action
+
+
+Inline checkboxes and radios
+
+Use the .checkbox-inline or .radio-inline classes on a series of checkboxes or radios for controls that appear on the same line.
+
+
+For <select> controls with the multiple attribute, multiple options are shown by default.
+
+
+196
+down vote
+accepted
+HTML5 ARIA attribute is what you're looking for. It can be used in your code even without bootstrap.
+
+Accessible Rich Internet Applications (ARIA) defines ways to make Web content and Web applications (especially those developed with Ajax and JavaScript) more accessible to people with disabilities.
+To be precise for your question, here is what your attributes are called as ARIA attribute states and model
+
+aria-labelledby: Identifies the element (or elements) that labels the current element.
+
+aria-hidden (state): Indicates that the element and all of its descendants are not visible or perceivable to any user as implemented by the author.
+
+
+According to bootstrap's documentation, the class is used to hide information intended only for screen readers from the layout of the rendered page.
+
+Screen readers will have trouble with your forms if you don't include a label for every input. For these inline forms, you can hide the labels using the .sr-only class.
+Here is an example styling used:
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
+Is it important or can I remove it? Works fine without.
+It's important, don't remove it.
+
+
+<!-- Indicates a successful or positive action -->
+<button type="button" class="btn btn-success">Success</button>
+
+<!-- Contextual button for informational alert messages -->
+<button type="button" class="btn btn-info">Info</button>
+
+<!-- Indicates caution should be taken with this action -->
+<button type="button" class="btn btn-warning">Warning</button>
+
+<!-- Indicates a dangerous or potentially negative action -->
+<button type="button" class="btn btn-danger">Danger</button>
+
+
+<img src="..." alt="..." class="img-rounded">
+<img src="..." alt="..." class="img-circle">
+<img src="..." alt="..." class="img-thumbnail">
+
+
+<p class="text-muted">...</p>
+<p class="text-primary">...</p>
+<p class="text-success">...</p>
+<p class="text-info">...</p>
+<p class="text-warning">...</p>
+<p class="text-danger">...</p>
+
+
+<p class="bg-primary">...</p>
+<p class="bg-success">...</p>
+<p class="bg-info">...</p>
+<p class="bg-warning">...</p>
+<p class="bg-danger">...</p>
+
+
+Close icon
+Use the generic close icon for dismissing content like modals and alerts.
+
+×
+<button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+Carets
+Use carets to indicate dropdown functionality and direction. Note that the default caret will reverse automatically in dropup menus.
+
+ <span class="caret"></span>
+
+--
+Quick floats
+Float an element to the left or right with a class. !important is included to avoid specificity issues. Classes can also be used as mixins.
+
+<div class="pull-left">...</div>
+<div class="pull-right">...</div>
+// Classes
+.pull-left {
+  float: left !important;
+}
+.pull-right {
+  float: right !important;
+}
+
+// Usage as mixins
+.element {
+  .pull-left();
+}
+.another-element {
+  .pull-right();
+}
+
+--
+Center content blocks
+Set an element to display: block and center via margin. Available as a mixin and class.
+
+<div class="center-block">...</div>
+// Class
+.center-block {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+// Usage as a mixin
+.element {
+  .center-block();
+}
+
+--
+Clearfix
+Easily clear floats by adding .clearfix to the parent element. Utilizes the micro clearfix as popularized by Nicolas Gallagher. Can also be used as a mixin.
+
+<!-- Usage as a class -->
+<div class="clearfix">...</div>
+// Mixin itself
+.clearfix() {
+  &:before,
+  &:after {
+    content: " ";
+    display: table;
+  }
+  &:after {
+    clear: both;
+  }
+}
+
+// Usage as a mixin
+.element {
+  .clearfix();
+}
+
+--
+customize bootstrap in less
+@brand-primary: darken(#428bca, 6.5%); // #337ab7
+@brand-success: #5cb85c;
+@brand-info:    #5bc0de;
+@brand-warning: #f0ad4e;
+@brand-danger:  #d9534f;
+
+--
