@@ -1,0 +1,152 @@
+-- naming convention--
+http://getbem.com/naming/
+Naming
+There are only two hard problems in Computer Science: cache invalidation and naming things — Phil Karlton
+It is a known fact that the right styleguide can significantly increase development speed, debugging, and the implementation of new features in legacy code. Sadly, most CSS codebases are sometimes developed without any structure or naming conventions. This leads to an unmaintainable CSS codebase in the long term.
+
+The BEM approach ensures that everyone who participates in the development of a website works with a single codebase and speaks the same language. Using proper naming will prepare you for the changes in design of the website.
+
+Block
+
+Encapsulates a standalone entity that is meaningful on its own. While blocks can be nested and interact with each other, semantically they remain equal; there is no precedence or hierarchy. Holistic entities without DOM representation (such as controllers or models) can be blocks as well.
+
+Naming
+
+Block names may consist of Latin letters, digits, and dashes. To form a CSS class, add a short prefix for namespacing: .block
+
+HTML
+
+Any DOM node can be a block if it accepts a class name.
+
+<div class="block">...</div>
+CSS
+
+Use class name selector only
+No tag name or ids
+No dependency on other blocks/elements on a page
+.block { color: #042; }
+Element
+
+Parts of a block and have no standalone meaning. Any element is semantically tied to its block.
+
+Naming
+
+Element names may consist of Latin letters, digits, dashes and underscores. CSS class is formed as block name plus two underscores plus element name: .block__elem
+
+HTML
+
+Any DOM node within a block can be an element. Within a given block, all elements are semantically equal.
+
+<div class="block">
+	  ...
+	  <span class="block__elem"></span>
+	</div>
+CSS
+
+Use class name selector only
+No tag name or ids
+No dependency on other blocks/elements on a page
+Good
+.block__elem { color: #042; }
+Bad
+.block .block__elem { color: #042; }
+	div.block__elem { color: #042; }
+Modifier
+
+Flags on blocks or elements. Use them to change appearance, behavior or state.
+
+Naming
+
+Modifier names may consist of Latin letters, digits, dashes and underscores. CSS class is formed as block’s or element’s name plus two dashes: .block--mod or .block__elem--mod and .block--color-black with .block--color-red. Spaces in complicated modifiers are replaced by dash.
+
+HTML
+
+Modifier is an extra class name which you add to a block/element DOM node. Add modifier classes only to blocks/elements they modify, and keep the original class:
+
+Good
+<div class="block block--mod">...</div>
+	<div class="block block--size-big
+		block--shadow-yes">...</div>
+Bad
+<div class="block--mod">...</div>
+CSS
+
+Use modifier class name as selector:
+
+.block--hidden { }
+To alter elements based on a block-level modifier:
+
+.block--mod .block__elem { }
+Element modifier:
+
+.block__elem--mod { }
+Example
+
+Suppose you have block form with modifiers theme: "xmas" and simple: true and with elements input and submit, and element submit with its own modifier disabled: true for not submitting form while it is not filled:
+
+HTML
+
+<form class="form form--theme-xmas form--simple">
+  <input class="form__input" type="text" />
+  <input
+    class="form__submit form__submit--disabled"
+    type="submit" />
+</form>
+CSS
+
+.form { }
+.form--theme-xmas { }
+.form--simple { }
+.form__input { }
+.form__submit { }
+.form__submit--disabled { }
+
+
+
+---- selector ---
+Selector syntax
+
+A simple selector is either a type selector or universal selector followed immediately by zero or more attribute selectors, ID selectors, or pseudo-classes, in any order. The simple selector matches if all of its components match.
+
+
+A selector is a chain of one or more simple selectors separated by combinators. Combinators are: white space, ">", and "+". White space may appear between a combinator and the simple selectors around it.
+
+
+If the universal selector is not the only component of a simple selector, the "*" may be omitted. For example:
+
+*[lang=fr] and [lang=fr] are equivalent.
+*.warning and .warning are equivalent.
+*#myid and #myid are equivalent.
+
+---
+The following selector:
+
+div * p 
+matches a P element that is a grandchild or later descendant of a DIV element. Note the white space on either side of the "*" is not part of the universal selector; the white space is a combinator indicating that the DIV must be the ancestor of some element, and that that element must be an ancestor of the P.
+
+The selector in the following rule, which combines descendant and attribute selectors, matches any element that (1) has the "href" attribute set and (2) is inside a P that is itself inside a DIV:
+
+div p *[href]
+
+---
+Child selectors
+
+A child selector matches when an element is the child of some element. A child selector is made up of two or more selectors separated by ">".
+
+The following rule sets the style of all P elements that are children of BODY:
+
+body > P { line-height: 1.3 }
+The following example combines descendant selectors and child selectors:
+
+div ol>li p
+It matches a P element that is a descendant of an LI; the LI element must be the child of an OL element; the OL element must be a descendant of a DIV. Notice that the optional white space around the ">" combinator has been left out.
+
+
+---
+
+
+
+---- media ---
+https://www.w3.org/TR/CSS2/media.html#continuous-media-group
+file: wealth_channel_account_v1_param_group_fees.json
+
