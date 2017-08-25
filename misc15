@@ -1,0 +1,7 @@
+ var lineReader = require('readline').createInterface({
+ 	input: require('fs').createReadStream('H:\\dev\\node\\input\\git_reset_files.txt')
+ });
+
+ lineReader.on('line', function(line){
+ 	console.log('git checkout '+line);
+ });
