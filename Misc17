@@ -1,0 +1,194 @@
+
+03/11/2017 -------- my notes ---------
+https://gist.github.com/staltz/868e7e9bc2a7b8c1f754
+
+--- CSS BEM naming conventions -----
+https://en.bem.info/methodology/naming-convention/
+block-name__elem-name_mod-name_mod-val
+
+Alternative naming schemes
+The naming rules above describe the classic approach to naming BEM entities. All BEM tools follow the classic naming scheme by default.
+
+There are alternative solutions that are actively used in the BEM community. To have all technologies apply identical names that were created using alternative naming schemes, use the bem-naming tool. By default, bem-naming is configured to use the methodology's standard naming convention, but it allows you to add rules so you can use alternative schemes.
+
+Two Dashes style
+block-name__elem-name--mod-name--mod-val
+
+
+1/11/2017 my notes
+--- angular directives ---
+> is not in the documentation.
+
+< is for one-way binding.
+
+@ binding is for passing strings. These strings support {{}} expressions for interpolated values.
+
+= binding is for two-way model binding. The model in parent scope is linked to the model in the directive's isolated scope.
+
+& binding is for passing a method into your directive's scope so that it can be called within your directive.
+
+When we are setting scope: true in directive, Angular js will create a new scope for that directive. That means any changes made to the directive scope will not reflect back in parent controller.
+
+
+31/10/2017 my notes
+-------------
+angular
+
+
+On the one hand, a provider in an NgModule is registered in the root injector. That means that every provider registered within an NgModule will be accessible in the entire application.
+
+On the other hand, a provider registered in an application component is available only on that component and all its children.
+
+---
+
+Focus on the constructor
+Adding a parameter to the constructor isn't all that's happening here.
+
+src/app/heroes/hero-list.component.ts
+ content_copy
+constructor(heroService: HeroService) {
+  this.heroes = heroService.getHeroes();
+}
+Note that the constructor parameter has the type HeroService, and that the HeroListComponent class has an @Component decorator (scroll up to confirm that fact). Also recall that the parent component (HeroesComponent) has providers information for HeroService.
+
+The constructor parameter type, the @Component decorator, and the parent's providers information combine to tell the Angular injector to inject an instance of HeroService whenever it creates a new HeroListComponent.
+
+----
+Dependencies are singletons within the scope of an injector. In this guide's example, a single HeroService instance is shared among the HeroesComponent and its HeroListComponent children.
+
+However, Angular DI is a hierarchical injection system, which means that nested injectors can create their own service instances. 
+---
+src/app/test.component.ts
+ content_copy
+let expectedHeroes = [{name: 'A'}, {name: 'B'}]
+let mockService = <HeroService> {getHeroes: () => expectedHeroes }
+
+it('should have heroes when HeroListComponent created', () => {
+  let hlc = new HeroListComponent(mockService);
+  expect(hlc.heroes.length).toEqual(expectedHeroes.length);
+});
+------
+@Injectable() marks a class as available to an injector for instantiation. Generally speaking, an injector reports an error when trying to instantiate a class that is not marked as @Injectable().
+
+---------
+Consider adding @Injectable() to every service class, even those that don't have dependencies and, therefore, do not technically require it. Here's why:
+Future proofing: No need to remember @Injectable() when you add a dependency later.
+Consistency: All services follow the same rules, and you don't have to wonder why a decorator is missing.
+---
+Injectors are also responsible for instantiating components like HeroesComponent. So why doesn't HeroesComponent have @Injectable()?
+
+You can add it if you really want to. It isn't necessary because the HeroesComponent is already marked with @Component, and this decorator class (like @Directive and @Pipe, which you learn about later) is a subtype of @Injectable(). It is in fact @Injectable() decorators that identify a class as a target for instantiation by an injector.
+---
+ALWAYS INCLUDE THE PARENTHESES
+Always write @Injectable(), not just @Injectable. The application will fail mysteriously if you forget the parentheses.
+-----
+Alternative class providers
+
+Occasionally you'll ask a different class to provide the service. The following code tells the injector to return a BetterLogger when something asks for the Logger.
+
+src/app/providers.component.ts
+ content_copy
+[{ provide: Logger, useClass: BetterLogger }]
+
+-------
+
+
+-----------
+.bashrc
+export PS1="\[\033[38;5;11m\]\u\[$(tput sgr0)\]\[\033[38;5;15m\]@\h:\[$(tput sgr0)\]\[\033[38;5;6m\][\$PWD]:\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]"
+
+alias ll="ls -l"
+alias log1="cd /logs/mqgjbuat/mwm-pipes1-ext-uat1"
+alias log2="cd /logs/mqgjbuat/mwm-pipes2-ext-uat1"
+alias v1="view /logs/mqgjbuat/mwm-pipes1-ext-uat1/server.log"
+alias v2="view /logs/mqgjbuat/mwm-pipes1-ext-uat2/server.log"
+alias t1="tail -f /logs/mqgjbuat/mwm-pipes1-ext-uat1/server.log"
+alias t2="tail -f /logs/mqgjbuat/mwm-pipes1-ext-uat2/server.log"
+
+# alias g1 = g1()
+
+function g1() { grep -r -i "$1" /log/mqgjbuat/mwm-pipes1-ext-uat1/server.log; }
+function g2() { grep -r -i "$1" /log/mqgjbuat/mwm-pipes2-ext-uat1/server.log; }
+
+
+23/10/2017 --- notes ---
+How to debug in Chrome:
+node uDeployCheckAndImportVersions.js --inspect-brk 
+
+
+02/11/2017 mynotes
+---------
+RxJS
+
+Observables programming has two separate stages: setup and execution.
+--------
+var observer = rx.Observer.create(
+  function onNext(result){ 
+    console.log(result); 
+  },
+  function onError(err){ 
+    console.log(err); 
+  },
+  function onCompleted(){ 
+    console.log('Completed'); 
+  }
+);
+observable.subscribe(observer);
+-----
+
+=========================typescripts=================
+https://www.typescriptlang.org/docs/handbook/declaration-files/do-s-and-don-ts.html
+General Types
+Number, String, Boolean, and Object
+
+Don’t ever use the types Number, String, Boolean, or Object. These types refer to non-primitive boxed objects that are almost never used appropriately in JavaScript code.
+
+/* WRONG */
+function reverse(s: String): String;
+Do use the types number, string, and boolean.
+
+/* OK */
+function reverse(s: string): string;
+Instead of Object, use the non-primitive object type (added in TypeScript 2.2).
+-----------
+https://github.com/Microsoft/TypeScript/wiki/FAQ#why-doesnt-type-inference-work-on-this-interface-interface-foot---
+Why doesn't type inference work on this interface: interface Foo<T> { } ?
+-------
+Optional Parameters in Callbacks
+
+Don’t use optional parameters in callbacks unless you really mean it:
+
+/* WRONG */
+interface Fetcher {
+    getObject(done: (data: any, elapsedTime?: number) => void): void;
+}
+This has a very specific meaning: the done callback might be invoked with 1 argument or might be invoked with 2 arguments. The author probably intended to say that the callback might not care about the elapsedTime parameter, but there’s no need to make the parameter optional to accomplish this – it’s always legal to provide a callback that accepts fewer arguments.
+
+Do write callback parameters as non-optional:
+
+/* OK */
+interface Fetcher {
+    getObject(done: (data: any, elapsedTime: number) => void): void;
+}
+------------
+If we want to stop listening to changes, we can unsubscribe by getting a reference and clean up on $destroy.
+
+-----
+mergedStreams = rx.Observable.merge(
+  rx.DOM.keydown(document),    
+  rx.DOM.click(document),
+  rx.DOM.mousemove(document),
+  rx.DOM.scroll(document),    
+  rx.DOM.touchstart(document)
+);
+
+var idleStream = mergedStreams
+  .bufferWithTime(5000)
+  .filter(function(arr){
+    return arr.length===0;
+  })
+  .subscribe();
+
+  -------------
+  Reactive Programming is a paradigm where asynchronous data streams can be used almost everywhere. Everything is a stream. Repeat with me!
+  --------
